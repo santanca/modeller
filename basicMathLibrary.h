@@ -34,6 +34,8 @@ public:
 private:
 };
 
+//
+
 //Represents a colour using floats r,g,b
 class colour{
 public:
