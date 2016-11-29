@@ -5,6 +5,7 @@
 #include "nodeTransformation.h"
 #include "nodeShape.h"
 #include "MaterialNode.h"
+#include "TextureNode.h"
 
 //#include "nodeShape.cpp"
 //#include <vector>
@@ -14,13 +15,14 @@ using namespace std;
 class SceneObject{
 	public: 
 		SceneObject();
-		SceneObject(int id, NodeTransformation *mytranslate, NodeTransformation *myrotation, NodeTransformation *myscale, NodeShape *myshape, MaterialNode *mymaterial);
+		SceneObject(int id, NodeTransformation *mytranslate, NodeTransformation *myrotation, NodeTransformation *myscale, NodeShape *myshape, MaterialNode *mymaterial, TextureNode *mytexture);
 		int id;
 		NodeTransformation *translate;
 		NodeTransformation *rotation;
 		NodeTransformation *scale;
 		NodeShape *shape;
 		MaterialNode *material;
+		TextureNode *texture;
 		int material_id;
 
 		void translateFunc(point3D pointTranslate);	//float x, float y, float z

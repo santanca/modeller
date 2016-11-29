@@ -28,7 +28,7 @@ float angleX = 0;
 float angleY = 0;
 bool shadingGouraud = true;
 bool light0_on = true;
-bool light1_on = false;
+bool light1_on = true;
 int rotationMode = 0;
 int materialMode = 0;
 
@@ -63,15 +63,83 @@ float m_dif2[] = {0.78, 0.57, 0.11, 1.0};
 float m_spec2[] = {0.99, 0.91, 0.81, 1.0};
 float shiny2 = 27;
 
-//defualt material
+/*** defualt material ***/
 float m_amb[] = {0.1, 0.1, 0.1, 1.0};
 float m_dif[] = {0.5, 0.5, 0.5, 1.0};
 float m_spec[] = {0.99, 0.91, 0.81, 1.0};
 float shiny =10; //10, 100
 
+/*** TEXTURES***/
+//an array for iamge data
+GLubyte* marbles_texture;
+GLubyte* crates_texture;
+GLubyte* stone_texture;
+GLubyte* ironPattern_texture;
+GLuint textures[4];
+int width1, height1, max1;
+int width2 , height2, max2;
+int width3, height3, max3;
+int width4 , height4, max4;
+
+/* LoadPPM -- loads the specified ppm file, and returns the image data as a GLubyte 
+ *  (unsigned byte) array. Also returns the width and height of the image, and the
+ *  maximum colour value by way of arguments
+ *  usage: GLubyte myImg = LoadPPM("myImg.ppm", &width, &height, &max);
+ */
+GLubyte* LoadPPM(char* file, int* width, int* height, int* max)
+{
+	GLubyte* img;
+	FILE *fd;
+	int n, m;
+	int  k, nm;
+	char c;
+	int i;
+	char b[100];
+	float s;
+	int red, green, blue;
+	
+	fd = fopen(file, "r");
+	fscanf(fd,"%[^\n] ",b);
+	if(b[0]!='P'|| b[1] != '3')
+	{
+		printf("%s is not a PPM file!\n",file); 
+		exit(0);
+	}
+	printf("%s is a PPM file\n", file);
+	fscanf(fd, "%c",&c);
+	while(c == '#') 
+	{
+		fscanf(fd, "%[^\n] ", b);
+		printf("%s\n",b);
+		fscanf(fd, "%c",&c);
+	}
+	ungetc(c,fd); 
+	fscanf(fd, "%d %d %d", &n, &m, &k);
+
+	printf("%d rows  %d columns  max value= %d\n",n,m,k);
+
+	nm = n*m;
+
+	img = (GLubyte*)malloc(3*sizeof(GLuint)*nm);
 
 
+	s=255.0/k;
 
+
+	for(i=0;i<nm;i++) 
+	{
+		fscanf(fd,"%d %d %d",&red, &green, &blue );
+		img[3*nm-3*i-3]=red*s;
+		img[3*nm-3*i-2]=green*s;
+		img[3*nm-3*i-1]=blue*s;
+	}
+
+	*width = n;
+	*height = m;
+	*max = k;
+
+	return img;
+}
 
 int getID(){
 	return nodeID++;
@@ -107,10 +175,13 @@ void drawBackGround(){
 		//floor
 
 		glColor3f(1,0,0);
-		
+		glNormal3f(0,1,0);
 		glVertex3f(0,0,0);
+		glNormal3f(0,1,0);
 		glVertex3f(roomSize,0,0);
+		glNormal3f(0,1,0);
 		glVertex3f(roomSize,0,roomSize);
+		glNormal3f(0,1,0);
 		glVertex3f(0,0,roomSize);
 
 		/*glColor3f(1,0,0);
@@ -165,7 +236,12 @@ void insertObject(NodeType type){
 	//material node
 	MaterialNode *material = new MaterialNode(defualtMat);
 	sceneGraph->insertNode(material);
+	sceneGraph->toChild(0);
 	printf("Inside Insert Object %f %f %f \n",material->material.amb.x,material->material.amb.y, material->material.amb.z );
+
+	TextureNode *texture = new TextureNode(textures[0], type);
+	sceneGraph->insertNode(texture);
+	sceneGraph->toChild(0);
 
 	//actual shape object
 	NodeShape *shape = new NodeShape(type);
@@ -176,7 +252,7 @@ void insertObject(NodeType type){
 	sceneGraph->insertNode(material);*/
 
 
-	SceneObject* newObject = new SceneObject(groupID,originTranslate,originRotate,originScale,shape, material);
+	SceneObject* newObject = new SceneObject(groupID,originTranslate,originRotate,originScale,shape, material, texture);
 	sceneObjectList->push_back(newObject);
 	if(currentObject != NULL){ printf("Inside INSERT Size of object list: %i\n", sceneObjectList->size());}
 	
@@ -274,6 +350,17 @@ void keyboard(unsigned char key, int x, int y)
 		case 'o':{
 			printf("Insert Cube\n");
 			insertObject(cube);
+			break;	
+		}
+			//temporary delete object
+		case 'n':{
+			printf("Insert Cube\n");
+			insertObject(teapot);
+			break;	
+		}
+		case ',':{
+			printf("Insert Cone\n");
+			insertObject(cone);
 			break;	
 		}
 		//translate currently selected object along xz plane
@@ -411,6 +498,43 @@ void keyboard(unsigned char key, int x, int y)
 			}
 			break;
 		}
+		case '6':
+		{
+			if(currentObject != NULL){
+					//currentObject->material_id = 1;
+					//glBindTexture(GL_TEXTURE_2D, textures[0]);
+					currentObject->texture->texture = textures[0];
+			}
+			break;
+		}
+		case '7':
+		{
+			if(currentObject != NULL){
+					//currentObject->material_id = 1;
+					//glBindTexture(GL_TEXTURE_2D, textures[1]);
+					currentObject->texture->texture = textures[1];
+			}
+			break;
+		}
+		case '8':
+		{
+			if(currentObject != NULL){
+					//currentObject->material_id = 1;
+					//glBindTexture(GL_TEXTURE_2D, textures[1]);
+					currentObject->texture->texture = textures[2];
+			}
+			break;
+		}
+		case '9':
+		{
+			if(currentObject != NULL){
+					//currentObject->material_id = 1;
+					//glBindTexture(GL_TEXTURE_2D, textures[1]);
+					currentObject->texture->texture = textures[3];
+			}
+			break;
+		}
+		
 
 
 
@@ -614,9 +738,59 @@ void display(void)
 	sceneGraph->draw();
 	drawLightSources();
 
+	glutSolidTeapot(1);
 
 	printCurrentNode();
 	glutSwapBuffers();
+}
+
+void initTexture(){
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	//glBlendFunc(0, 0);
+
+	//add texture code here!
+
+	marbles_texture = LoadPPM("marble.ppm", &width1, &height1, &max1);
+	crates_texture = LoadPPM("crates_256.ppm", &width2, &height2, &max2);
+	stone_texture = LoadPPM("stone_256.ppm", &width3, &height3, &max3);
+	ironPattern_texture = LoadPPM("ironPattern_256.ppm", &width4, &height4, &max4);
+	glEnable(GL_TEXTURE_2D); 
+
+	glGenTextures(4, textures); 
+	glBindTexture(GL_TEXTURE_2D, textures[0]);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width1, height1, 0, GL_RGB,GL_UNSIGNED_BYTE, marbles_texture);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
+
+	glBindTexture(GL_TEXTURE_2D, textures[1]);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width2, height2, 0, GL_RGB,GL_UNSIGNED_BYTE, crates_texture);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
+
+	glBindTexture(GL_TEXTURE_2D, textures[2]);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width3, height3, 0, GL_RGB,GL_UNSIGNED_BYTE, stone_texture);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
+
+	glBindTexture(GL_TEXTURE_2D, textures[3]);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width4, height4, 0, GL_RGB,GL_UNSIGNED_BYTE, ironPattern_texture);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
+
+	glDisable(GL_TEXTURE_2D);
 }
 
 //initilize height map,camera, lighting, shading variables
@@ -637,6 +811,8 @@ void init(void)
     glEnable(GL_DEPTH_TEST);	//enable the depth test and enable lights
     drawLightSources();
     sceneGraph = new SceneGraph();
+
+    initTexture();
 }
 
 /* main function - program entry point */

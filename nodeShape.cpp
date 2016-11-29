@@ -78,12 +78,22 @@ void NodeShape::nodeSpecificCodeDown(){
 				glPopMatrix();
 			}
 			glEnable(GL_LIGHTING);
-			glutWireTeapot(1);
-			//glutSolidTeapot
+			//glutWireTeapot(1);
+			glutSolidTeapot(1);
 			break;
 
 		case cone:
-			glutSolidCone(0.5,1,10,10);
+			if(currentlySelected){
+				glPushMatrix();
+					//glDisable(GL_COLOR_MATERIAL);
+					glDisable(GL_LIGHTING);
+					glColor3f(0,1,0);
+					glutWireCube(2);
+				glPopMatrix();
+			}
+			glEnable(GL_LIGHTING);
+			//glutWireTeapot(1);
+			glutSolidCone(1,1,100,100);
 			break;
 	}
 }
