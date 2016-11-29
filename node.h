@@ -21,11 +21,11 @@ enum NodeType{
 	sphere,
 	torus,
 	teapot,
-	cone
+	cone,
 
-	//textures/materials
-	//material,
-	//textures,
+	//textures/materials nodes
+	material,
+	texture
 			
 };
 

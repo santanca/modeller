@@ -32,7 +32,7 @@ void Node::draw(){
 	//iterate through the children and draw each child
 	for (int i = 0; i < children->size(); ++i)
 	{
-		printf("Inside Node\n");
+		//printf("Inside Node\n");
 		children->at(i)->draw();
 	}
 

@@ -30,7 +30,7 @@ bool shadingGouraud = true;
 bool light0_on = true;
 bool light1_on = false;
 int rotationMode = 0;
-
+int materialMode = 0;
 
 SceneGraph *sceneGraph;
 SceneObject *currentObject;
@@ -46,16 +46,16 @@ float camSpeed = 0.1f;
 
 /*** LIGHT0 PROPERTIES ***/
 float light0_Pos[] = {roomSize/2, 20, roomSize/2, 1};
-float amb[4] = {0.5, 0.5, 0.5, 1};
-float dif[4] = {1, 1, 1, 1};
-float spc[4] = {1, 1, 1, 1};
+float amb0[4] = {0.5, 0.5, 0.5, 1};
+float dif0[4] = {1, 1, 1, 1};
+float spc0[4] = {1, 1, 1, 1};
 
 
 /*** LIGHT1 PROPERTIES ***/
 float light1_Pos[] = {0,20,0,1};
-float amb2[4] = {0.5, 0.5, 0.5, 1};
-float dif2[4] = {1, 1, 1, 1};
-float spc2[4] = {1, 1, 1, 1};
+float amb1[4] = {0.5, 0.5, 0.5, 1};
+float dif1[4] = {1, 1, 1, 1};
+float spc1[4] = {1, 1, 1, 1};
 
 /*** LIGHT MATERIAL ***/
 float m_amb2[] = {0.33, 0.22, 0.03, 1.0};
@@ -63,12 +63,13 @@ float m_dif2[] = {0.78, 0.57, 0.11, 1.0};
 float m_spec2[] = {0.99, 0.91, 0.81, 1.0};
 float shiny2 = 27;
 
-
 //defualt material
 float m_amb[] = {0.1, 0.1, 0.1, 1.0};
 float m_dif[] = {0.5, 0.5, 0.5, 1.0};
 float m_spec[] = {0.99, 0.91, 0.81, 1.0};
 float shiny =10; //10, 100
+
+
 
 
 
@@ -101,7 +102,7 @@ void drawBackGround(){
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, m_spec);
 	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shiny);
 
-	glutSolidSphere(10,50,50);
+	//sglutSolidSphere(10,50,50);
 	glBegin(GL_QUADS);
 		//floor
 
@@ -133,6 +134,10 @@ void drawBackGround(){
 void insertObject(NodeType type){
 	sceneGraph->toRoot();
 
+
+	Material defualtMat = Material(m_amb, m_dif, m_spec,shiny);
+	Material gold (m_amb2, m_dif2, m_spec2, shiny2);
+
 	point3D origin (0,0,0);
 	point3D scaleOrigin(1,1,1);
 
@@ -157,11 +162,21 @@ void insertObject(NodeType type){
 	sceneGraph->insertNode(originScale);
 	sceneGraph->toChild(0);
 
+	//material node
+	MaterialNode *material = new MaterialNode(defualtMat);
+	sceneGraph->insertNode(material);
+	printf("Inside Insert Object %f %f %f \n",material->material.amb.x,material->material.amb.y, material->material.amb.z );
+
 	//actual shape object
 	NodeShape *shape = new NodeShape(type);
 	sceneGraph->insertNode(shape);
 
-	SceneObject* newObject = new SceneObject(groupID,originTranslate,originRotate,originScale,shape);
+	/*//material node
+	MaterialNode *material = new MaterialNode(gold);
+	sceneGraph->insertNode(material);*/
+
+
+	SceneObject* newObject = new SceneObject(groupID,originTranslate,originRotate,originScale,shape, material);
 	sceneObjectList->push_back(newObject);
 	if(currentObject != NULL){ printf("Inside INSERT Size of object list: %i\n", sceneObjectList->size());}
 	
@@ -237,18 +252,18 @@ void keyboard(unsigned char key, int x, int y)
 			break;
 
 		//toggle drawing terrain with quads or traingles
-		case '1':{
+		case 'y':{
 			printf("Inserting a sphere\n");
 			insertObject(sphere);
 			break;
 		}
-		case '2':{
+		case 'u':{
 			printf("Inserting a torus\n");	
 			insertObject(torus);
 			break;
 		}
 		//temporary delete object
-		case '3':{
+		case 'i':{
 			printf("Delete Sphere\n");
 			if(currentObject != NULL){
 				deleteObject(currentObject->id);
@@ -256,41 +271,53 @@ void keyboard(unsigned char key, int x, int y)
 			break;	
 		}
 		//temporary delete object
-		case '4':{
+		case 'o':{
 			printf("Insert Cube\n");
 			insertObject(cube);
 			break;	
 		}
 		//translate currently selected object along xz plane
 		case 'w':{
-			point3D p1 (0,0,-1);
-			currentObject->translateFunc(p1);
+			if(currentObject != NULL){
+				point3D p1 (0,0,-1);
+				currentObject->translateFunc(p1);
+			}
 			break;
 		}
 		case 'a':{
-			point3D p1 (-1,0,0);
-			currentObject->translateFunc(p1);
+			if(currentObject != NULL){
+				point3D p1 (-1,0,0);
+				currentObject->translateFunc(p1);
+			}
 			break;
 		}
 		case 's':{
-			point3D p1 (0,0,1);
-			currentObject->translateFunc(p1);
+			if(currentObject != NULL){
+				point3D p1 (0,0,1);
+				currentObject->translateFunc(p1);
+			}
 			break;
 		}			
 		case 'd':{
-			point3D p1 (1,0,0);
-			currentObject->translateFunc(p1);
+			if(currentObject != NULL){
+				point3D p1 (1,0,0);
+				currentObject->translateFunc(p1);
+			}
 			break;
 		}
 		//translate the currently selected object along the y axis
 		case 'e':{
-			point3D p1 (0,1,0);
-			currentObject->translateFunc(p1);
+			if(currentObject != NULL){
+				point3D p1 (0,1,0);
+				currentObject->translateFunc(p1);
+			}
 			break;
 		}
 		case 'q':{
-			point3D p1 (0,-1,0);
-			currentObject->translateFunc(p1);
+			if(currentObject != NULL){
+				point3D p1 (0,-1,0);
+				currentObject->translateFunc(p1);
+			}
 			break;
 		}
 		//rotate about the x axis
@@ -335,6 +362,56 @@ void keyboard(unsigned char key, int x, int y)
 			}
 			break;
 		}
+		//modify object material
+		case '1':
+		{
+			if(currentObject != NULL){
+					currentObject->material_id = 1;
+					currentObject->material->material.setEmerald();
+			}
+			break;
+		}
+		case '2':
+		{
+			if(currentObject != NULL){
+					currentObject->material_id = 1;
+					currentObject->material->material.setRuby();
+			}
+			break;
+		}
+		case '3':
+		{
+			if(currentObject != NULL){
+					currentObject->material_id = 1;
+					currentObject->material->material.setYellowRubber();
+			}
+			break;
+		}
+		case '4':
+		{
+			if(currentObject != NULL){
+					currentObject->material_id = 1;
+					currentObject->material->material.setCyanPlastic();
+			}
+			break;
+		}
+		case '5':
+		{
+			if(currentObject != NULL){
+					currentObject->material_id = 1;
+					currentObject->material->material.setChrome();
+			}
+			break;
+		}
+		case '0':
+		{
+			if(currentObject != NULL){
+					currentObject->material_id = 1;
+					currentObject->material->material.setReset();
+			}
+			break;
+		}
+
 
 
 		/*//movecamera taget
@@ -484,11 +561,10 @@ void drawLightSources(){
 		glLoadIdentity();
 		if(light0_on == true){
 		glEnable(GL_LIGHT0);		//turn on light bulb 0	
-			//upload material data to gpu
 			glLightfv(GL_LIGHT0, GL_POSITION, light1_Pos);
-			glLightfv(GL_LIGHT0, GL_DIFFUSE, dif);
-			glLightfv(GL_LIGHT0, GL_AMBIENT, amb);
-			glLightfv(GL_LIGHT0, GL_SPECULAR, spc);
+			glLightfv(GL_LIGHT0, GL_DIFFUSE, dif0);
+			glLightfv(GL_LIGHT0, GL_AMBIENT, amb0);
+			glLightfv(GL_LIGHT0, GL_SPECULAR, spc0);
 
 			glPushMatrix();
 				glLoadIdentity();
@@ -499,11 +575,10 @@ void drawLightSources(){
 
 		if(light1_on == true){
 			glEnable(GL_LIGHT1);		//turn on light bulb 1
-			//upload material data to gpu
 			glLightfv(GL_LIGHT1, GL_POSITION, light1_Pos);
-			glLightfv(GL_LIGHT1, GL_DIFFUSE, dif2);
-			glLightfv(GL_LIGHT1, GL_AMBIENT, amb2);
-			glLightfv(GL_LIGHT1, GL_SPECULAR, spc2);
+			glLightfv(GL_LIGHT1, GL_DIFFUSE, dif1);
+			glLightfv(GL_LIGHT1, GL_AMBIENT, amb1);
+			glLightfv(GL_LIGHT1, GL_SPECULAR, spc1);
 
 			glPushMatrix();
 				glLoadIdentity();

@@ -4,6 +4,8 @@ Computer Graphics 3GC3 Assignment 2: Terrain Modeling
 Cesar Antonio Santana Penner - 001411598
 Date: November 9, 2016
 */
+#ifndef __BASICMATHLIBRARY_H_
+#define __BASICMATHLIBRARY_H_
 class point3;
 class vec3D;
 
@@ -42,3 +44,5 @@ public:
 	float r,g,b;
 private:
 };
+
+#endif

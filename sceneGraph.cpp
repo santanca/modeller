@@ -87,7 +87,7 @@ void SceneGraph::deleteNode(int id){
 }
 
 void SceneGraph::draw(){
-	printf("Insde Graph\n");
+	//printf("Insde Graph\n");
 	rootNode->draw();
 	/*point3D p (1,2,3);
 	NodeTransformation t (translate,p);*/

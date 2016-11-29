@@ -18,9 +18,7 @@ NodeShape::NodeShape(NodeType type){
 
 }
 
-void NodeShape::nodeSpecificCodeDown(){
-	printf("Inside nodeShape\n");
-	
+void NodeShape::nodeSpecificCodeDown(){	
 	//glTranslatef(50,20 ,50);
 	glColor3f(0,1,0);
 	switch(nodeType){
@@ -40,13 +38,6 @@ void NodeShape::nodeSpecificCodeDown(){
 
 		case sphere:
 			glColor3f(0,1,0);
-			printf("Inside sphere\n");
-			/*glColor3f(0,1,0);
-			glLoadIdentity();
-			glTranslatef(250,20 ,250);*/
-			//if
-			//glutWireCube(20);
-			//glColor3f(0,0,1);
 			if(currentlySelected){
 				glPushMatrix();
 					//glDisable(GL_COLOR_MATERIAL);
@@ -78,7 +69,6 @@ void NodeShape::nodeSpecificCodeDown(){
 			break;
 
 		case teapot:
-			printf("Inside teapot\n");	
 			if(currentlySelected){
 				glPushMatrix();
 					//glDisable(GL_COLOR_MATERIAL);
