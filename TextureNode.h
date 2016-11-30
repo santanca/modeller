@@ -22,6 +22,7 @@ class TextureNode: public Node{
 		TextureNode(GLuint mytexture, NodeType);
 		GLuint texture;
 		NodeType textureType;
+		bool applyTexture;
 		virtual void nodeSpecificCodeDown();
 		virtual void nodeSpecificCodeUp();
 

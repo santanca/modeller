@@ -49,7 +49,7 @@ void NodeShape::nodeSpecificCodeDown(){
 			glColor3f(0,1,0);
 			if(currentlySelected){
 				glPushMatrix();
-					glDisable(GL_COLOR_MATERIAL);
+					//glDisable(GL_COLOR_MATERIAL);
 					glDisable(GL_LIGHTING);
 					//glLoadIdentity();
 					glColor3f(0,1,0);
@@ -58,7 +58,7 @@ void NodeShape::nodeSpecificCodeDown(){
 				glPopMatrix();
 			}
 			//glutSolidSphere(1,50,50);
-			//gluSphere(sphereOBJ, 1, 20, 20);
+			gluSphere(sphereOBJ, 1, 20, 20);
 
 			glEnable(GL_LIGHTING);
 			break;

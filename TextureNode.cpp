@@ -16,24 +16,28 @@ TextureNode::TextureNode(){}
 TextureNode::TextureNode(GLuint mytexture){
 	texture = mytexture;
 	textureType = cube;
+	applyTexture = false;
 }
 
 TextureNode::TextureNode(GLuint mytexture, NodeType type){
 	texture = mytexture;
 	textureType	= type;
+	applyTexture = false;
 }
 
 void TextureNode::nodeSpecificCodeDown(){
 	//glPushMatrix();
 	//printf("Inside TextureNode\n");
 		//glLoadIdentity();
-	if(textureType == torus){
-		glEnable(GL_TEXTURE_GEN_S); //enable texture coordinate generation
-    	glEnable(GL_TEXTURE_GEN_T);
-    	//glBindTexture(GL_TEXTURE_2D, textures[1]);
-	}
-		glBindTexture(GL_TEXTURE_2D, texture);
-		glEnable(GL_TEXTURE_2D); 
+	if(applyTexture == true){
+		if(textureType == torus){
+			glEnable(GL_TEXTURE_GEN_S); //enable texture coordinate generation
+	    	glEnable(GL_TEXTURE_GEN_T);
+	    	//glBindTexture(GL_TEXTURE_2D, textures[1]);
+		}
+			glBindTexture(GL_TEXTURE_2D, texture);
+			glEnable(GL_TEXTURE_2D);
+	} 
 		//glBindTexture(GL_TEXTURE_2D,texture);
 	//glPopMatrix();
 
@@ -41,9 +45,11 @@ void TextureNode::nodeSpecificCodeDown(){
 
 
 void TextureNode::nodeSpecificCodeUp(){
-	if(textureType == torus){
-		glDisable(GL_TEXTURE_GEN_S); //enable texture coordinate generation
-    glDisable(GL_TEXTURE_GEN_T);
+	if (applyTexture == true){
+		if(textureType == torus){
+			glDisable(GL_TEXTURE_GEN_S); //enable texture coordinate generation
+	    glDisable(GL_TEXTURE_GEN_T);
+		}
+		glDisable(GL_TEXTURE_2D);
 	}
-	glDisable(GL_TEXTURE_2D);
 };

@@ -835,7 +835,7 @@ void keyboard(unsigned char key, int x, int y)
 			break;
 
 		//toggle lighting
-		case 'l':
+		case 'p':
 			if(light0_on == true && light1_on == true){
 				light1_on = false;
 				glDisable(GL_LIGHT1);
@@ -851,18 +851,18 @@ void keyboard(unsigned char key, int x, int y)
 			break;
 
 		//toggle drawing terrain with quads or traingles
-		case 'y':{
+		case 'j':{
 			printf("Inserting a sphere\n");
 			insertObject(sphere);
 			break;
 		}
-		case 'u':{
+		case 'k':{
 			printf("Inserting a torus\n");	
 			insertObject(torus);
 			break;
 		}
 		//temporary delete object
-		case 'i':{
+		case 'l':{
 			printf("Delete Sphere\n");
 			if(currentObject != NULL){
 				deleteObject(currentObject->id);
@@ -870,20 +870,20 @@ void keyboard(unsigned char key, int x, int y)
 			break;	
 		}
 		//temporary delete object
-		case 'o':{
+		case ';':{
 			printf("Insert Cube\n");
 			insertObject(cube);
 			break;	
 		}
 			//temporary delete object
-		case 'n':{
+		case '\'':{
 			printf("Insert Cube\n");
 			insertObject(teapot);
 			break;	
 		}
 		case ',':{
 			printf("Insert Cone\n");
-			insertObject(cone);
+			insertObject(tetrahedron);
 			break;	
 		}
 		//translate currently selected object along xz plane
@@ -963,6 +963,56 @@ void keyboard(unsigned char key, int x, int y)
 			}
 			break;
 		}
+		case 'y':
+		{
+			if(currentObject != NULL){
+					point3D p1 (1,0,0);
+					currentObject->scaleFunc(p1);
+			}
+			break;
+		}
+		case 'u':
+		{
+			if(currentObject != NULL){
+					point3D p1 (0,0,1);
+					currentObject->scaleFunc(p1);
+			}
+			break;
+		}
+		case 'i':
+		{
+			if(currentObject != NULL){
+					point3D p1 (0,1,0);
+					currentObject->scaleFunc(p1);
+			}
+			break;
+		}
+		case 'Y':
+		{
+			if(currentObject != NULL){
+					point3D p1 (-1,0,0);
+					currentObject->scaleFunc(p1);
+			}
+			break;
+		}
+		case 'U':
+		{
+			if(currentObject != NULL){
+					point3D p1 (0,0,-1);
+					currentObject->scaleFunc(p1);
+			}
+			break;
+		}
+		case 'I':
+		{
+			if(currentObject != NULL){
+					point3D p1 (0,-1,0);
+					currentObject->scaleFunc(p1);
+			}
+			break;
+		}
+
+
 		//modify object rotation mode
 		case 'c':
 		{
@@ -1104,7 +1154,7 @@ void keyboard(unsigned char key, int x, int y)
 			break;
 
 		//change position of light 0
-		case 'U':
+		case '/':
 			light1_Pos[2] -= 5;
 			glLightfv(GL_LIGHT1, GL_POSITION, light1_Pos);
 			break;
@@ -1158,7 +1208,17 @@ void keyboard(unsigned char key, int x, int y)
 			
 			break;
 		}
+		case 't': 
+		{
+			if (currentObject->texture->applyTexture == false){
+				printf("Current object apply texture\n");
+				currentObject->texture->applyTexture = true;
+			}else{
+				currentObject->texture->applyTexture = false;
+			}
 			
+			break;
+		}	
 
 
 	}
