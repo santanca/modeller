@@ -27,7 +27,7 @@ void TextureNode::nodeSpecificCodeDown(){
 	//glPushMatrix();
 	//printf("Inside TextureNode\n");
 		//glLoadIdentity();
-	if(textureType == cube || textureType == sphere ||textureType == torus || textureType == cone){
+	if(textureType == torus){
 		glEnable(GL_TEXTURE_GEN_S); //enable texture coordinate generation
     	glEnable(GL_TEXTURE_GEN_T);
     	//glBindTexture(GL_TEXTURE_2D, textures[1]);
@@ -41,7 +41,7 @@ void TextureNode::nodeSpecificCodeDown(){
 
 
 void TextureNode::nodeSpecificCodeUp(){
-	if(textureType == cube || textureType == sphere ||textureType == torus || textureType == cone){
+	if(textureType == torus){
 		glDisable(GL_TEXTURE_GEN_S); //enable texture coordinate generation
     glDisable(GL_TEXTURE_GEN_T);
 	}

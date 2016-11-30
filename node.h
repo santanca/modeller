@@ -21,7 +21,7 @@ enum NodeType{
 	sphere,
 	torus,
 	teapot,
-	cone,
+	tetrahedron,
 
 	//textures/materials nodes
 	material,
