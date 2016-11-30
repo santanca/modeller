@@ -3,7 +3,7 @@ using namespace std;
 //#include <vector>
 //#include "basicMathLibrary.h"
 
-SceneObject::SceneObject(int id, NodeTransformation *mytranslate, NodeTransformation *myrotation, NodeTransformation *myscale, NodeShape *myshape, MaterialNode *mymaterial, TextureNode *mytexture){
+SceneObject::SceneObject(int id, NodeTransformation *mytranslate, NodeTransformation *myrotation, NodeTransformation *myscale, NodeShape *myshape, MaterialNode *mymaterial, TextureNode *mytexture, HitBox *myhitBox){
 	this->id = id;
 	translate = mytranslate;
 	rotation = myrotation;
@@ -12,6 +12,7 @@ SceneObject::SceneObject(int id, NodeTransformation *mytranslate, NodeTransforma
 	material = mymaterial;
 	texture = mytexture;
 	material_id=0;
+	hitBox = myhitBox;
 }
 
 void SceneObject::translateFunc(point3D pointTranslate){

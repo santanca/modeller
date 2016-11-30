@@ -23,7 +23,7 @@ void NodeTransformation::nodeSpecificCodeDown(){
 			glTranslatef(trans.x,trans.y,trans.z);
 			break;
 		case rotate:
-			printf("Inside the rotate function\n");
+			//printf("Inside the rotate function\n");
 			glRotatef(trans.x,1,0,0);
 			glRotatef(trans.y,0,1,0);
 			glRotatef(trans.z,0,0,1);

@@ -6,6 +6,7 @@
 #include "nodeShape.h"
 #include "MaterialNode.h"
 #include "TextureNode.h"
+#include "hitBox.h"
 
 //#include "nodeShape.cpp"
 //#include <vector>
@@ -15,7 +16,7 @@ using namespace std;
 class SceneObject{
 	public: 
 		SceneObject();
-		SceneObject(int id, NodeTransformation *mytranslate, NodeTransformation *myrotation, NodeTransformation *myscale, NodeShape *myshape, MaterialNode *mymaterial, TextureNode *mytexture);
+		SceneObject(int id, NodeTransformation *mytranslate, NodeTransformation *myrotation, NodeTransformation *myscale, NodeShape *myshape, MaterialNode *mymaterial, TextureNode *mytexture, HitBox *myhitBox);
 		int id;
 		NodeTransformation *translate;
 		NodeTransformation *rotation;
@@ -23,6 +24,7 @@ class SceneObject{
 		NodeShape *shape;
 		MaterialNode *material;
 		TextureNode *texture;
+		HitBox *hitBox;
 		int material_id;
 
 		void translateFunc(point3D pointTranslate);	//float x, float y, float z

@@ -20,7 +20,7 @@ MaterialNode::MaterialNode(Material mat){
 void MaterialNode::nodeSpecificCodeDown(){
 	glPushMatrix();
 		//glLoadIdentity();
-		printf("Inside Material %f %f %f \n",material.amb.x,material.amb.y, material.amb.z );
+		//printf("Inside Material %f %f %f \n",material.amb.x,material.amb.y, material.amb.z );
 
 		float m_amb[] = {material.amb.x,material.amb.y, material.amb.z, 1.0};
 		float m_dif[] = {material.dif.x, material.dif.y, material.dif.z, 1.0};
