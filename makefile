@@ -10,6 +10,7 @@ CFLAGS= -w -g -Wall -std=c++11
 CC=g++
 EXEEXT=
 RM=rm
+CXXFLAGS=-std=c++11
 
 # Windows (cygwin)
 ifeq "$(OS)" "Windows_NT"

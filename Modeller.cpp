@@ -20,6 +20,12 @@ Date: November ..., 2016
 #include "basicMathLibrary.h"
 using std::vector;
 #include <math.h>
+#include <iostream>
+#include <fstream>
+#include <stdio.h>
+#include <string.h>
+#include <string> 
+using namespace std;
 
 #define PI 3.14159265		//used for hit detection
 
@@ -43,8 +49,12 @@ int nextChild = 0;
 int currentObjectIndex = 0;
 vector<SceneObject*> *sceneObjectList = new vector<SceneObject*>;
 
-//HitBox hitBox(0,5,0,2);
 
+/*** Output Stream Varuable***/
+//ofstream myfile;
+
+//HitBox hitBox(0,5,0,2);
+/*** PLANE Struct ***/
 struct Plane{
 	float px, py,pz;
 	bool intersect;
@@ -87,7 +97,6 @@ float m_spec[] = {0.99, 0.91, 0.81, 1.0};
 float shiny =10; //10, 100
 
 /*** TEXTURES***/
-//an array for iamge data
 GLubyte* marbles_texture;
 GLubyte* crates_texture;
 GLubyte* stone_texture;
@@ -158,9 +167,392 @@ GLubyte* LoadPPM(char* file, int* width, int* height, int* max)
 	return img;
 }
 
+string getShape(int shapeType){
+	if(shapeType == 0){
+		return "root";
+	}else if( shapeType == 1){
+		return "group";
+	}else if (shapeType == 2){
+		return "scale";
+	}else if(shapeType == 3){
+		return "translate";
+	}else if (shapeType == 4){
+		return "rotate";
+	}else if(shapeType == 5 ){
+		return "cube";
+	}else if (shapeType == 6){
+		return "sphere";
+	}else if (shapeType == 7){
+		return "torus";
+	}else if (shapeType == 8){
+		return "teapot";
+	}else if (shapeType == 9){
+		return "tetrahedron";
+	}else if (shapeType == 10){
+		return "material";
+	}else if (shapeType ==11 ){
+		return "texture";
+	}else{
+		return "derp";
+	}
+}
+
+void saveScene(){
+	//printf("Save Scene, file name: \n");
+
+	string filename;
+	cout << "File name to save: ";
+	cin >> filename;
+	//myfile = ofstream(filename);
+	cout << "Saving scene to: " + filename << endl;
+	//string temp (filename);
+	ofstream myfile (filename.c_str());
+	/*myfile = ofstream(filename);
+	*/
+	if (myfile.is_open()){
+		//myfile << "Writing this to a file.\n";
+		//SceneObject *temp = currentObject;
+		//myfile << "{" << endl;
+
+		for (int i = 0; i < sceneObjectList->size(); ++i)
+		{
+			//myfile << "["; 
+			
+			/*myfile << "Object ID:" <<sceneObjectList->at(i)->id << endl;
+			string shape = getShape(sceneObjectList->at(i)->shape->nodeType);
+			myfile << "Shape: " << shape << endl;
+			myfile << "Translate x: " << sceneObjectList->at(i)->translate->trans.x << endl;
+			myfile << "Translate y: " << sceneObjectList->at(i)->translate->trans.y << endl;
+			myfile << "Translate z: " << sceneObjectList->at(i)->translate->trans.z << endl;
+
+			myfile << "Rotate x: " << sceneObjectList->at(i)->rotation->trans.x << endl;
+			myfile << "Rotate y: " << sceneObjectList->at(i)->rotation->trans.y << endl;
+			myfile << "Rotate z: " << sceneObjectList->at(i)->rotation->trans.z << endl;
+
+			myfile << "Scale x: " << sceneObjectList->at(i)->scale->trans.x << endl;
+			myfile << "Scale y: " << sceneObjectList->at(i)->scale->trans.y << endl;
+			myfile << "Scale z: " << sceneObjectList->at(i)->scale->trans.z << endl;
+
+			myfile << "Material: " << sceneObjectList->at(i)->material->material.amb.x << ", " << sceneObjectList->at(i)->material->material.amb.y << ", " <<  sceneObjectList->at(i)->material->material.amb.z << ", " << sceneObjectList->at(i)->material->material.shiny<< endl;
+			myfile << "Texture: " << sceneObjectList->at(i)->texture->texture << endl;
+			myfile << "Texture off: " << sceneObjectList->at(i)->texture->applyTexture << endl;*/
+			string shape = getShape(sceneObjectList->at(i)->shape->nodeType);
+			myfile << shape << endl;
+			
+			myfile <<sceneObjectList->at(i)->id << endl;
+			
+			myfile << sceneObjectList->at(i)->translate->trans.x << endl;
+			myfile << sceneObjectList->at(i)->translate->trans.y << endl;
+			myfile << sceneObjectList->at(i)->translate->trans.z << endl;
+
+			myfile << sceneObjectList->at(i)->rotation->trans.x << endl;
+			myfile << sceneObjectList->at(i)->rotation->trans.y << endl;
+			myfile << sceneObjectList->at(i)->rotation->trans.z << endl;
+
+			myfile << sceneObjectList->at(i)->scale->trans.x << endl;
+			myfile << sceneObjectList->at(i)->scale->trans.y << endl;
+			myfile << sceneObjectList->at(i)->scale->trans.z << endl;
+
+			myfile << sceneObjectList->at(i)->material->material.amb.x << endl<< sceneObjectList->at(i)->material->material.amb.y << endl <<  sceneObjectList->at(i)->material->material.amb.z << endl;
+			//myfile << sceneObjectList->at(i)->material->material.dif.x << endl<< sceneObjectList->at(i)->material->material.dif.y << endl <<  sceneObjectList->at(i)->material->material.dif.z << endl;
+			//myfile << sceneObjectList->at(i)->material->material.spec.x << endl<< sceneObjectList->at(i)->material->material.spec.y << endl <<  sceneObjectList->at(i)->material->material.spec.z << endl;
+
+			myfile << sceneObjectList->at(i)->material->material.shiny<< endl;
+
+			myfile << sceneObjectList->at(i)->texture->texture << endl;
+			myfile << sceneObjectList->at(i)->texture->applyTexture << endl;
+
+			//myfile << "HitBox: " << sceneObjectList->at(i)->texture->texture << endl;
+
+			//myfile << "]";
+		}
+
+		//myfile << endl <<"}" ;
+		myfile.close();
+	}else{
+		cout << "Unable to open file." << endl;
+	}
+}
+
+void split(char a[]){
+	int sizeOfArray = sizeof(a) / sizeof(a[0]);
+	int i = 0;
+	for (int i = 0; i < sizeOfArray*2; ++i)
+	{
+		cout << a[i] << endl;
+	}
+}
+
+NodeType getNodeType(string shape){
+	if (shape == "sphere"){
+		return sphere;
+	}else if (shape == "torus"){
+		return torus;
+	}else if(shape == "cube"){
+		return cube;
+	}else if(shape == "teapot"){
+		return teapot;
+	}else if (shape == "tetrahedron"){
+		return tetrahedron;
+	}
+}
+
+void printSceneObject(SceneObject* so){
+	printf("Shape: ");
+	cout << getShape(so->shape->nodeType) << endl;
+
+	printf("ID: ");
+	cout << so->translate->id << endl;
+
+	printf("Trans x: ");
+	cout << so->translate->trans.x << endl;
+
+	printf("Trans y: ");
+	cout << so->translate->trans.y << endl;
+
+	printf("Trans z: ");
+	cout << so->translate->trans.z << endl;
+
+	printf("Rot x: ");
+	cout << so->rotation->trans.x << endl;
+
+	printf("Rot y: ");
+	cout << so->rotation->trans.y << endl;
+
+	printf("Rot z: ");
+	cout << so->rotation->trans.z << endl;
+
+	printf("Scale x: ");
+	cout << so->scale->trans.x << endl;
+
+	printf("Scale y: ");
+	cout << so->scale->trans.y << endl;
+
+	printf("Scale z: ");
+	cout << so->scale->trans.z << endl;
+
+	printf("mat amb x: ");
+	cout << so->material->material.amb.x << endl;
+
+	printf("mat amb y: ");
+	cout << so->material->material.amb.y << endl;
+
+	printf("mat amb z: ");
+	cout << so->material->material.amb.z << endl;
+
+	printf("shiny: ");
+	cout << so->material->material.shiny << endl;
+
+	printf("Tex: ");
+	cout << so->texture->texture << endl;
+
+	printf("TexON: ");
+	cout << so->texture->applyTexture << endl;
+}
+
+void loadScene(){
+	string file;
+	string line;
+	string filename;
+	cout << "Load from file: " ;
+	cin >> filename;
+	nextChild = 0;
+
+	ifstream myfile(filename.c_str());
+	if (myfile.is_open()){
+		int i =0;
+		
+		int id = 0;
+		NodeType type;
+		NodeTransformation *translateNode;
+		NodeTransformation *rotationNode;
+		NodeTransformation *scaleNode;
+		NodeShape *shape;
+		MaterialNode *materialNode;
+		vec3D mat;
+		float shiny; 
+		TextureNode *textureNode;
+		int tex;
+		int texOn;
+		point3D pTrans;
+		point3D pRotate;
+		point3D pScale; 
+		float x, y,z;
+
+	    while ( getline (myfile,line) ){
+	    	//cout << line << endl;
+	    	if(i == 0){
+	    		string temp = line;
+	    		NodeShape *s = new NodeShape(getNodeType(temp));
+	    		type = getNodeType(temp);
+	    		shape = s;
+	    		//*shape = new NodeShape(getNodeType(temp);
+	    		//string str = getShape(sceneObjectList->at(i)->shape->nodeType);
+				//printf("%s\n", str);
+	    	}else if (i == 1){
+	    		string temp = line;
+	    		int temp2 = stoi(temp);
+	    		id = temp2;
+	    		//printf("id %i\n",id);
+	    	}else if (i == 2){
+	    		string temp = line;
+	    		float myx = stof(temp);
+	    		x = myx;
+	    		//printf("x : %f\n", x);
+	    	}else if (i == 3){
+	    		string temp = line;
+	    		float myY = stof(temp);
+	    		y = myY;
+	    		//printf("%f\n", y );
+	    	}else if (i == 4){
+	    		string temp = line;
+	    		float myZ = stof(temp);
+	    		z = myZ;
+	    		point3D p1 (x,y,z);
+	    		pTrans = p1;
+	    	}else if (i == 5){
+	    		string temp = line;
+	    		float myx = stof(temp);
+	    		x = myx;
+	    	}else if (i == 6){
+	    		string temp = line;
+	    		float myY = stof(temp);
+	    		y = myY;
+	    		//printf("%f\n", y );
+	    	}else if (i == 7){
+	    		//string temp = line;
+	    		string temp = line;
+	    		float myZ = stof(temp);
+	    		z = myZ;
+	    		point3D p1 (x,y,z);
+	    		pRotate = p1;
+	    	}else if (i == 8){
+	    		string temp = line;
+	    		float myx = stof(temp);
+	    		x = myx;
+	    	}else if (i == 9){
+	    		string temp = line;
+	    		//string temp = line;
+	    		float myY = stof(temp);
+	    		y = myY;
+	    	}else if (i == 10){
+	    		string temp = line;
+	    		float myZ = stof(temp);
+	    		z = myZ;
+	    		point3D p1 (x,y,z);
+	    		pScale = p1;
+	    	}else if (i == 11){
+	    		string temp = line;
+	    		float myx = stof(temp);
+	    		x = myx;
+	    	}else if (i == 12){
+	    		string temp = line;
+	    		float myY = stof(temp);
+	    		y = myY;
+	    	}else if (i == 13){
+	    		string temp = line;
+	    		float myZ = stof(temp);
+	    		z = myZ;
+	    		vec3D v (x,y,z);
+	    		mat = v;
+	    	}else if (i == 14){
+	    		string temp = line;
+	    		shiny = stof(temp);
+	    	}else if (i == 15){
+	    		string temp = line;
+	    		tex = stoi(temp);
+	    	}else if (i == 16){
+	    		string temp = line;
+	    		texOn = stoi(temp);
+	    		i = -1;
+	    		
+	    	}//else if (i == 17){
+	    		//printf("Hello\n");
+	    	if(i == -1){
+	    		Material defualtMat = Material(m_amb, m_dif, m_spec,shiny);
+
+	    		NodeGroup *group = new NodeGroup();
+				sceneGraph->insertNode(group);
+				sceneGraph->toChild(nextChild++);
+
+				int groupID = sceneGraph->getCurrentNodeID();
+				//translate node
+				translateNode = new NodeTransformation(translate,pTrans);
+				sceneGraph->insertNode(translateNode);
+				sceneGraph->toChild(0);
+
+				//rotation node
+				rotationNode = new NodeTransformation(rotate,pRotate);
+				sceneGraph->insertNode(rotationNode);
+				sceneGraph->toChild(0);
+
+				//scale node
+				scaleNode = new NodeTransformation(scale,pScale);
+				sceneGraph->insertNode(scaleNode);
+				sceneGraph->toChild(0);
+
+				//material node
+				materialNode = new MaterialNode(defualtMat);
+				sceneGraph->insertNode(materialNode);
+				sceneGraph->toChild(0);
+				//printf("Inside Insert Object %f %f %f \n",material->material.amb.x,material->material.amb.y, material->material.amb.z);
+
+				textureNode = new TextureNode(textures[0], type);
+				sceneGraph->insertNode(textureNode);
+				sceneGraph->toChild(0);
+
+				//actual shape object
+				//NodeShape *shape = new NodeShape(type);
+				sceneGraph->insertNode(shape);
+
+				HitBox *myhitbox = new HitBox(0,0,0,2);
+
+				/*//material node
+				MaterialNode *material = new MaterialNode(gold);
+				sceneGraph->insertNode(material);*/
+
+
+				SceneObject *newObject = new SceneObject(id,translateNode,rotationNode,scaleNode,shape, materialNode, textureNode, myhitbox);
+				printSceneObject(newObject);
+				sceneObjectList->push_back(newObject);
+				if(currentObject != NULL){ printf("Inside INSERT Size of object list: %i\n", sceneObjectList->size());
+				}
+				
+				if (nextChild>1)currentObject->deselect();
+				newObject->select();
+				currentObject = newObject;
+				currentObjectIndex = sceneObjectList->size()-1;
+			}
+				//i= -1;
+	    	//}
+
+	    	//string shape2 = getShape(shape->nodeType);
+			//cout << shape2 << endl;
+	    	i++;
+	    }
+	    //glutPostRedisplay();
+
+	    //printf("%f %f %f \n", p.x, p.y, p.z);
+	      //cout << line << '\n';
+	      //printf("%s\n", line );
+	      	//file += line;
+	    	//file.push_back('\n');
+	    
+	    myfile.close();
+  	}else{
+  		cout << "Unable to open file"; 
+  	} 
+
+  
+  	//printf("%s\n", file );
+  	//cout << file ;
+}
+
+
 int getID(){
 	return nodeID++;
 }
+
 
 //reset the values of the material
 void resetMaterial(){
@@ -311,6 +703,20 @@ void deleteObject(int id){
 		nextChild = 0; 
 	}
 	//}
+}
+
+void resetScene(){
+	//currentObject->id
+	for (int i = 0; i < sceneObjectList->size(); ++i)
+	{
+		deleteObject(sceneObjectList->at(i)->id);
+	}
+	if (sceneObjectList->size() > 1){
+		resetScene();
+		//printf("-------WHAT\n");
+	}
+	deleteObject(sceneObjectList->at(0)->id);
+	//sceneObjectList = new vector<SceneObject*>;
 }
 
 //Test if the floor is clicked
@@ -827,7 +1233,7 @@ void keyboard(unsigned char key, int x, int y)
 		
 		//
 		case 'r':	
-			
+			resetScene();
 			break;
 		//
 		case 'R':
@@ -1252,6 +1658,12 @@ void special(int key, int x, int y)
 	case GLUT_KEY_DOWN:
 		angleY -=5;
 		break;
+	case GLUT_KEY_F2:
+		saveScene();
+		break;
+    case GLUT_KEY_F3:
+		loadScene();
+		break;
     }
 	glutPostRedisplay();
 }
@@ -1442,7 +1854,9 @@ void init(void)
 {
 	//glClearColor(0, 0, 0, 0);
 	//glColor3f(1, 1, 1);
-    
+    //split("Object ID:1");
+
+
     printInstruction();
     glShadeModel(GL_SMOOTH);
 
