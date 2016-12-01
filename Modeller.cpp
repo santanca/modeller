@@ -254,8 +254,8 @@ void saveScene(){
 			myfile << sceneObjectList->at(i)->scale->trans.z << endl;
 
 			myfile << sceneObjectList->at(i)->material->material.amb.x << endl<< sceneObjectList->at(i)->material->material.amb.y << endl <<  sceneObjectList->at(i)->material->material.amb.z << endl;
-			//myfile << sceneObjectList->at(i)->material->material.dif.x << endl<< sceneObjectList->at(i)->material->material.dif.y << endl <<  sceneObjectList->at(i)->material->material.dif.z << endl;
-			//myfile << sceneObjectList->at(i)->material->material.spec.x << endl<< sceneObjectList->at(i)->material->material.spec.y << endl <<  sceneObjectList->at(i)->material->material.spec.z << endl;
+			myfile << sceneObjectList->at(i)->material->material.dif.x << endl<< sceneObjectList->at(i)->material->material.dif.y << endl <<  sceneObjectList->at(i)->material->material.dif.z << endl;
+			myfile << sceneObjectList->at(i)->material->material.spec.x << endl<< sceneObjectList->at(i)->material->material.spec.y << endl <<  sceneObjectList->at(i)->material->material.spec.z << endl;
 
 			myfile << sceneObjectList->at(i)->material->material.shiny<< endl;
 
@@ -350,13 +350,73 @@ void printSceneObject(SceneObject* so){
 	cout << so->texture->applyTexture << endl;
 }
 
+void deleteObject(int id){
+	//if(currentObject != NULL){
+	sceneGraph->deleteNode(id);
+	int index = -1;
+	for (int i = 0; i < sceneObjectList->size(); ++i)
+	{
+		if(sceneObjectList->at(i)->id == id){
+			index = i;
+			break;
+		}
+	}
+
+	if(sceneObjectList->size()-1 > 0){
+		sceneObjectList->erase(sceneObjectList->begin()+index);
+		currentObject = sceneObjectList->at(sceneObjectList->size()-1);
+		currentObject->shape->currentlySelected = true;
+	
+		nextChild--;
+	}else if (sceneObjectList->size()-1==0){
+		currentObject =NULL;
+		nextChild = 0; 
+	}
+	//}
+}
+
+
+void insertObject(SceneObject *sceneOBJ){
+
+	sceneObjectList->push_back(sceneOBJ);
+	if(currentObject != NULL){ //printf("Inside INSERT Size of object list: %i\n", sceneObjectList->size());
+	}
+	
+	if (nextChild>1)currentObject->deselect();
+	sceneOBJ->select();
+	currentObject = sceneOBJ;
+	currentObjectIndex = sceneObjectList->size()-1;
+
+		/*sceneGraph.toParent();
+		NodeShape s (sphere);
+		sceneGraph.insertNode(s);	*/
+}
+
+void resetScene(){
+	//currentObject->id
+	sceneGraph = new SceneGraph();
+	for (int i = 0; i < sceneObjectList->size(); ++i)
+	{
+		deleteObject(sceneObjectList->at(i)->id);
+	}
+	if (sceneObjectList->size() > 1){
+		resetScene();
+		//printf("-------WHAT\n");
+	}
+	deleteObject(sceneObjectList->at(0)->id);
+	//sceneObjectList = new vector<SceneObject*>;
+}
+
 void loadScene(){
+	if(currentObject != NULL){resetScene() ;}
 	string file;
 	string line;
 	string filename;
 	cout << "Load from file: " ;
 	cin >> filename;
 	nextChild = 0;
+	currentObjectIndex = 0;
+	
 
 	ifstream myfile(filename.c_str());
 	if (myfile.is_open()){
@@ -369,7 +429,9 @@ void loadScene(){
 		NodeTransformation *scaleNode;
 		NodeShape *shape;
 		MaterialNode *materialNode;
-		vec3D mat;
+		vec3D amb;
+		vec3D dif;
+		vec3D spec;
 		float shiny; 
 		TextureNode *textureNode;
 		int tex;
@@ -391,8 +453,7 @@ void loadScene(){
 				//printf("%s\n", str);
 	    	}else if (i == 1){
 	    		string temp = line;
-	    		int temp2 = stoi(temp);
-	    		id = temp2;
+	    		id = stoi(temp);
 	    		//printf("id %i\n",id);
 	    	}else if (i == 2){
 	    		string temp = line;
@@ -454,22 +515,53 @@ void loadScene(){
 	    		float myZ = stof(temp);
 	    		z = myZ;
 	    		vec3D v (x,y,z);
-	    		mat = v;
+	    		amb = v;		
 	    	}else if (i == 14){
 	    		string temp = line;
-	    		shiny = stof(temp);
+	    		float myx = stof(temp);
+	    		x = myx;
 	    	}else if (i == 15){
 	    		string temp = line;
-	    		tex = stoi(temp);
+	    		float myY = stof(temp);
+	    		y = myY;	    			
 	    	}else if (i == 16){
+	    		string temp = line;
+	    		float myZ = stof(temp);
+	    		z = myZ;
+	    		vec3D v (x,y,z);
+	    		dif = v;
+	    	}else if (i == 17){
+	    		string temp = line;
+	    		float myx = stof(temp);
+	    		x = myx;
+	    	}else if (i == 18){
+	    		string temp = line;
+	    		float myY = stof(temp);
+	    		y = myY;	
+	    	}else if (i == 19){
+	    		string temp = line;
+	    		float myZ = stof(temp);
+	    		z = myZ;
+	    		vec3D v (x,y,z);
+	    		spec = v;
+	    	}else if (i == 20){
+	    		string temp = line;
+	    		shiny = stof(temp);
+	    	}else if (i == 21){
+	    		string temp = line;
+	    		tex = stoi(temp);
+	    	}else if (i == 22){
 	    		string temp = line;
 	    		texOn = stoi(temp);
 	    		i = -1;
-	    		
-	    	}//else if (i == 17){
-	    		//printf("Hello\n");
+	    	}
+
+
 	    	if(i == -1){
-	    		Material defualtMat = Material(m_amb, m_dif, m_spec,shiny);
+	    		sceneGraph->toRoot();
+	    		
+	    		//Material defualtMat = Material(m_amb, m_dif, m_spec,shiny);
+	    		Material defualtMat = Material(amb,dif,spec,shiny);
 
 	    		NodeGroup *group = new NodeGroup();
 				sceneGraph->insertNode(group);
@@ -497,7 +589,7 @@ void loadScene(){
 				sceneGraph->toChild(0);
 				//printf("Inside Insert Object %f %f %f \n",material->material.amb.x,material->material.amb.y, material->material.amb.z);
 
-				textureNode = new TextureNode(textures[0], type);
+				textureNode = new TextureNode(textures[tex], type);
 				sceneGraph->insertNode(textureNode);
 				sceneGraph->toChild(0);
 
@@ -513,7 +605,10 @@ void loadScene(){
 
 
 				SceneObject *newObject = new SceneObject(id,translateNode,rotationNode,scaleNode,shape, materialNode, textureNode, myhitbox);
-				printSceneObject(newObject);
+				insertObject(newObject);
+				currentObject->texture->applyTexture = texOn;
+				
+				/*printSceneObject(newObject);
 				sceneObjectList->push_back(newObject);
 				if(currentObject != NULL){ printf("Inside INSERT Size of object list: %i\n", sceneObjectList->size());
 				}
@@ -521,7 +616,7 @@ void loadScene(){
 				if (nextChild>1)currentObject->deselect();
 				newObject->select();
 				currentObject = newObject;
-				currentObjectIndex = sceneObjectList->size()-1;
+				currentObjectIndex = sceneObjectList->size()-1;*/
 			}
 				//i= -1;
 	    	//}
@@ -611,6 +706,7 @@ void drawBackGround(){
 
 }
 
+
 void insertObject(NodeType type){
 	sceneGraph->toRoot();
 
@@ -680,44 +776,7 @@ void insertObject(NodeType type){
 		sceneGraph.insertNode(s);	*/
 }
 
-void deleteObject(int id){
-	//if(currentObject != NULL){
-	sceneGraph->deleteNode(id);
-	int index = -1;
-	for (int i = 0; i < sceneObjectList->size(); ++i)
-	{
-		if(sceneObjectList->at(i)->id == id){
-			index = i;
-			break;
-		}
-	}
 
-	if(sceneObjectList->size()-1 > 0){
-		sceneObjectList->erase(sceneObjectList->begin()+index);
-		currentObject = sceneObjectList->at(sceneObjectList->size()-1);
-		currentObject->shape->currentlySelected = true;
-	
-		nextChild--;
-	}else if (sceneObjectList->size()-1==0){
-		currentObject =NULL;
-		nextChild = 0; 
-	}
-	//}
-}
-
-void resetScene(){
-	//currentObject->id
-	for (int i = 0; i < sceneObjectList->size(); ++i)
-	{
-		deleteObject(sceneObjectList->at(i)->id);
-	}
-	if (sceneObjectList->size() > 1){
-		resetScene();
-		//printf("-------WHAT\n");
-	}
-	deleteObject(sceneObjectList->at(0)->id);
-	//sceneObjectList = new vector<SceneObject*>;
-}
 
 //Test if the floor is clicked
 void floorIntersection(GLdouble *Rd, GLdouble *R0){
@@ -1687,8 +1746,9 @@ void mouse(int btn, int state, int x, int y){
 	if(btn == GLUT_LEFT_BUTTON){
 		if(state == GLUT_DOWN){
 			printf("Left click %i , %i \n", mouseX, mouseY);
-
-			calcIntersections();
+			if(sceneObjectList->size() > 0){
+				calcIntersections();
+			}
 		}
 
 	//create a dent if the right button is pressed
