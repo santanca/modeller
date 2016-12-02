@@ -11,45 +11,39 @@ Description - Hitbox class
 #include <stdio.h> //needed for printf command
 
 HitBox::HitBox(float xcord, float ycord, float zcord,float len ){	//constructor
-	
+	//store the center of the cube
 	x = xcord;
 	y = ycord;
 	z = zcord;
+
 	length = len;
-	privateVar = 1;
 }
 
-void HitBox::hello(){	//our function hello
-	printf("hello world, private variable is: %f, public variable is: %f\n",privateVar, privateVar);
-}
-
-
-
-float HitBox::getX(){	//our function hello
+float HitBox::getX(){	//x getter
 	return x;
 }
 
-float HitBox::getY(){	//our function hello
+float HitBox::getY(){	//y getter
 	return y;
 }
 
-float HitBox::getZ(){	//our function hello
+float HitBox::getZ(){	//z getter
 	return z;
 }
 
-float HitBox::getLength(){
+float HitBox::getLength(){	//get the length of the hitbox
 	return length;
 }
 
-void HitBox::setX(float xs){
+void HitBox::setX(float xs){ //x setter
 	x = xs;
 }
 
-void HitBox::setY(float ys){
+void HitBox::setY(float ys){ //y setter
 	y = ys;
 }
 
-void HitBox::setZ(float zs){
+void HitBox::setZ(float zs){	//z setter
 	z = zs;
 }
 

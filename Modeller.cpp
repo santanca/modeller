@@ -30,7 +30,7 @@ using std::vector;
 #include <string> 
 using namespace std;
 
-#define PI 3.14159265		//used for hit detection
+#define PI 3.14159265		//used for hit detection calculations
 
 /*** GLOBALS  ***/
 //vars to save mouse x/y coord
@@ -44,6 +44,8 @@ bool light0_on = true;
 bool light1_on = true;
 int rotationMode = 0;
 int materialMode = 0;
+
+bool deleteClick = false;
 
 //Scene graph and scene object related variables
 SceneGraph *sceneGraph;
@@ -651,34 +653,32 @@ void floorIntersection(GLdouble *Rd, GLdouble *R0){
 				//Y Plane
 		if ((0 < P[2] && P[2] < (100) )&& (0 < P[0] && P[0] < (100) )){
 			//printf("Floor intersection %f , %f , %f \n", P[0], P[1], P[2] );
-		}else {
-			//printf("No intersection!  4 \n");
 		}
-
 		//printf("intersection %f , %f , %f \n", P[0], P[1], P[2] );
-
 	}
 }
 
+/*
+* 	hitTest, used for hit detecting the one of the points 
+*   returns the points of intersection
+*   if there whas no intersection with this hitbox then it just returns a Null value for the x
+*/
 point3D hitTest(float *point, GLdouble *Rd, GLdouble *R0,float* scale, float length){
+	//the origin of the hitbox
 	float x = point[0];
 	float y = point[1];
 	float z = point[2];
 
+	//the scaling factors
 	float scaleX = scale[0];
 	float scaleY = scale[1];
 	float scaleZ = scale[2];
 
-
-	//printf(" x: %f , y: %f , z: %f \n",x,y,z );
-
-	//The Bottom (to origin) Yplane
-	//calcualte normal
-	
 	float yBNorm[3] = {0,1,0};
 	//d = -ax - by - cz
 	float D = -1*yBNorm[0]*x - yBNorm[1]*y - yBNorm[2]*z;
 
+	//dot product
 	float dot = yBNorm[0]*Rd[0] + yBNorm[1]*Rd[1] + yBNorm[2]*Rd[2];
 
 	// if N cross Rd = 0, then ray is 90Deg to the plane
@@ -687,10 +687,9 @@ point3D hitTest(float *point, GLdouble *Rd, GLdouble *R0,float* scale, float len
 		point3D intersection(NULL,0,0);
 		return intersection;
 	}else {
-
+		//the dot product with R0
 		float dotR0 = yBNorm[0]*R0[0] + yBNorm[1]*R0[1] + yBNorm[2]*R0[2];
 		float t = (-1* (dotR0 + D ))/dot;
-
 		//Point P, point of intersection
 		float P[3];
 		P[0] = R0[0] + t*Rd[0];
@@ -702,21 +701,16 @@ point3D hitTest(float *point, GLdouble *Rd, GLdouble *R0,float* scale, float len
 			//printf("Y-Plane Bottom intersection %f , %f , %f \n", P[0], P[1], P[2] );
 			point3D intersection(P[0],P[1],P[2]);
 			return intersection;
-		}else {
-			//return false;
-			//printf("No intersection!  1 \n");
 		}
 	}
 
-	//The "Closer" (to origin) Zplane
+	//The Zplane that starts on the z plane
 	//Plane intersection test
 	//first compute N dot Rd 
 	float zNorm[3] = {-1,0,0};
 	//d = -ax - by - cz
 	D = -1*zNorm[0]*x - zNorm[1]*y - zNorm[2]*z;
-	
-	//printf("D:  %f\n", D);
-
+	//dot product
 	dot = zNorm[0]*Rd[0] + zNorm[1]*Rd[1] + zNorm[2]*Rd[2];
 
 	// if N cross Rd = 0, then ray is 90Deg to the plane
@@ -740,29 +734,18 @@ point3D hitTest(float *point, GLdouble *Rd, GLdouble *R0,float* scale, float len
 			//printf("Z-Plane Close intersection %f , %f , %f \n", P[0], P[1], P[2] );
 			point3D intersection(P[0],P[1],P[2]);
 			return intersection;
-		}else {
-			//return false;
-			//printf("No intersection!  2 \n");
 		}
 	}
 
-	//The "Closer" (to origin) Xplane
-
-
+	//the plane that starts on the x axis when hitbox is instantiated
 	//Plane intersection test
 	//first compute N dot Rd 
 	float xNorm[3] = {0,0,-1};
-	//xNorm[0] = norm.x;
-	//xNorm[1] = norm.y;
-	//xNorm[2] = norm.z;
-
-	//printf("X-Normal: x: %f , y: %f, z: %f \n",xNorm[0],xNorm[1],xNorm[2]  );
 
 	//d = -ax - by - cz
 	D = -1*xNorm[0]*x - xNorm[1]*y - xNorm[2]*z;
-	
-	//printf("D:  %f\n", D);
 
+	//the dot product
 	dot = xNorm[0]*Rd[0] + xNorm[1]*Rd[1] + xNorm[2]*Rd[2];
 
 	// if N cross Rd = 0, then ray is 90Deg to the plane
@@ -771,7 +754,7 @@ point3D hitTest(float *point, GLdouble *Rd, GLdouble *R0,float* scale, float len
 		point3D intersection(NULL,0,0);
 		return intersection;
 	}else {
-
+		//dot product with R0
 		float dotR0 = xNorm[0]*R0[0] + xNorm[1]*R0[1] + xNorm[2]*R0[2];
 		float t = (-1* (dotR0 + D ))/dot;
 
@@ -786,31 +769,35 @@ point3D hitTest(float *point, GLdouble *Rd, GLdouble *R0,float* scale, float len
 			//printf("X-Plane Close intersection %f , %f , %f \n", P[0], P[1], P[2] );
 			point3D intersection(P[0],P[1],P[2]);
 			return intersection;
-		}else {
-			//return false;
-			//printf("No intersection!  3 \n");
 		}
 	}
 	point3D intersection(NULL,0,0);
 	return intersection;
 }
 
+/*
+* 	hitTest2, used for hit detecting the one of the points
+*	does hit test with the other 3 planes (opposite planes thatn hitTest) 
+*   returns the points of intersection
+*   if there whas no intersection with this hitbox then it just returns a Null value for the x
+*/
 point3D hitTest2(float *point, GLdouble *Rd, GLdouble *R0, float *point2, float* scale , float length){
 	//hit test using the opposite point
 
-
+	//the lower point
 	float x = point[0];
 	float y = point[1];
 	float z = point[2];
 
+	//the opposite corner, the hight point
 	float x1 = point2[0];
 	float y1 = point2[1];
 	float z1 = point2[2];
 
+	//scaling factors
 	float scaleX = scale[0];
 	float scaleY = scale[1];
 	float scaleZ = scale[2];
-
 
 	//The "Farther" (to origin) Xplane
 	//Plane intersection test
@@ -819,8 +806,7 @@ point3D hitTest2(float *point, GLdouble *Rd, GLdouble *R0, float *point2, float*
 	//d = -ax - by - cz
 	float D = -1*xNorm[0]*x1 - xNorm[1]*y1 - xNorm[2]*z1;
 	
-	//printf("D:  %f\n", D);
-
+	//dot product
 	float dot = xNorm[0]*Rd[0] + xNorm[1]*Rd[1] + xNorm[2]*Rd[2];
 
 	// if N cross Rd = 0, then ray is 90Deg to the plane
@@ -830,8 +816,9 @@ point3D hitTest2(float *point, GLdouble *Rd, GLdouble *R0, float *point2, float*
 		return intersection;
 	}else {
 
+		//dot product with R0
 		float dotR0 = xNorm[0]*R0[0] + xNorm[1]*R0[1] + xNorm[2]*R0[2];
-		float t = (-1* (dotR0 + D ))/dot;
+		float t = (-1* (dotR0 + D ))/dot;	//find t
 
 		//Point P, point of intersection
 		float P[3];
@@ -844,9 +831,6 @@ point3D hitTest2(float *point, GLdouble *Rd, GLdouble *R0, float *point2, float*
 			//printf("X-Plane Far intersection %f , %f , %f \n", P[0], P[1], P[2] );
 			point3D intersection(P[0],P[1],P[2]);
 			return intersection;
-		}else {
-			//return false;
-			//printf("No intersection!  4 \n");
 		}
 	}
 
@@ -854,7 +838,7 @@ point3D hitTest2(float *point, GLdouble *Rd, GLdouble *R0, float *point2, float*
 	float yNorm[3] = {0,1,0};
 	//d = -ax - by - cz
 	D = -1*yNorm[0]*x1 - yNorm[1]*y1 - yNorm[2]*z1;
-
+	//dot product
 	dot = yNorm[0]*Rd[0] + yNorm[1]*Rd[1] + yNorm[2]*Rd[2];
 
 	// if N cross Rd = 0, then ray is 90Deg to the plane
@@ -863,9 +847,9 @@ point3D hitTest2(float *point, GLdouble *Rd, GLdouble *R0, float *point2, float*
 		point3D intersection(NULL,0,0);
 		return intersection;
 	}else {
-
+		//dot product with R0
 		float dotR0 = yNorm[0]*R0[0] + yNorm[1]*R0[1] + yNorm[2]*R0[2];
-		float t = (-1* (dotR0 + D ))/dot;
+		float t = (-1* (dotR0 + D ))/dot;		//find t
 
 		//Point P, point of intersection
 		float P[3];
@@ -878,9 +862,6 @@ point3D hitTest2(float *point, GLdouble *Rd, GLdouble *R0, float *point2, float*
 			//printf("Y-Plane Top intersection %f , %f , %f \n", P[0], P[1], P[2] );
 			point3D intersection(P[0],P[1],P[2]);
 			return intersection;
-		}else {
-			//return false;
-			//printf("No intersection!  5 \n");
 		}
 	}
 
@@ -891,8 +872,7 @@ point3D hitTest2(float *point, GLdouble *Rd, GLdouble *R0, float *point2, float*
 	//d = -ax - by - cz
 	D = -1*zNorm[0]*x1 - zNorm[1]*y1 - zNorm[2]*z1;
 	
-	//printf("D:  %f\n", D);
-
+	//dot product
 	dot = zNorm[0]*Rd[0] + zNorm[1]*Rd[1] + zNorm[2]*Rd[2];
 
 	// if N cross Rd = 0, then ray is 90Deg to the plane
@@ -901,7 +881,7 @@ point3D hitTest2(float *point, GLdouble *Rd, GLdouble *R0, float *point2, float*
 		point3D intersection(NULL,0,0);
 		return intersection;
 	}else {
-
+		//dot product with R0
 		float dotR0 = zNorm[0]*R0[0] + zNorm[1]*R0[1] + zNorm[2]*R0[2];
 		float t = (-1* (dotR0 + D ))/dot;
 
@@ -916,20 +896,16 @@ point3D hitTest2(float *point, GLdouble *Rd, GLdouble *R0, float *point2, float*
 			//printf("Z-Plane Far intersection %f , %f , %f \n", P[0], P[1], P[2] );
 			point3D intersection(P[0],P[1],P[2]);
 			return intersection;
-		}else {
-			//return false;
-			//printf("No intersection!  6 \n");
 		}
 	}
 	point3D intersection(NULL,0,0);
 	return intersection;
 }
 
-
-//calculate weather an intersection of our ray hits objects in teh scene
+//calculate weather an intersection of our ray hits a hitbox in the scene
 void calcIntersections(){
 	//---Construct ray-----------------------------------------------------
-
+	
 	//construct Ray
 	GLdouble R0[3], R1[3], Rd[3];
 	GLdouble modelMat[16], projMat[16];
@@ -956,8 +932,8 @@ void calcIntersections(){
 	Rd[1] /= m;
 	Rd[2] /= m;
 
-	printf("R0: %f, %f, %f | ", R0[0], R0[1], R0[2]);
-	printf("R1: %f, %f, %f | ", R1[0], R1[1], R1[2]);
+	//printf("R0: %f, %f, %f | ", R0[0], R0[1], R0[2]);
+	//printf("R1: %f, %f, %f | ", R1[0], R1[1], R1[2]);
 	//printf("Rd: %f, %f, %f | ", Rd[0], Rd[1], Rd[2]);
 
 	floorIntersection(Rd,R0);
@@ -966,41 +942,30 @@ void calcIntersections(){
 	-Search through list of objects in the Scene Graph and test Intersections with all of them
 	-keep track of all the objects I hit, but only select the closest one
 	*/
-
 	int oldId = currentObject->id;			//get the id of the object
+	//printf("---------  GOT HERE ---------\n");
 
-	//iterate through all the objects in the scene
-	//for (int i = 0; i < sceneObjectList->size() -1; i++){
-
-		//check if the mouse click hit this current object
-
-	/*
-	currentObject->deselect();
-	newObject->select();
-	currentObject = newObject;
-	*/
-
-	vector<int> objHit;
-	vector<point3D> hitPoints; 
+	vector<int> objHit;				//to keep track of which object we've hit
+	vector<point3D> hitPoints; 		//to keep track of all the points of intersection
 
 	int i = 0;
 	while (i<sceneObjectList->size()){
 
-		currentObject = sceneObjectList->at(i);
+		SceneObject* newObject = sceneObjectList->at(i);
 
 		//get origin of hitbox
-		float x = currentObject->translate->trans.x;
-		float y = currentObject->translate->trans.y;
-		float z = currentObject->translate->trans.z;
+		float x = newObject->translate->trans.x;
+		float y = newObject->translate->trans.y;
+		float z = newObject->translate->trans.z;
 		//printf("click object transl, x: %f, y: %f, z: %f \n", x,y,z );
 
 		//get the length of the hitbox
-		float length = currentObject->hitBox->getLength();
+		float length = newObject->hitBox->getLength();
 
 		//get the x,y,z Scale factors
-		float scaleX = currentObject->scale->trans.x;
-		float scaleY = currentObject->scale->trans.y;
-		float scaleZ = currentObject->scale->trans.z;
+		float scaleX = newObject->scale->trans.x;
+		float scaleY = newObject->scale->trans.y;
+		float scaleZ = newObject->scale->trans.z;
 		//printf("click object scale, x: %f, y: %f, z: %f \n", scaleX,scaleY,scaleZ );
 
 		//get the lower coordinate (at object instantiation)
@@ -1028,46 +993,24 @@ void calcIntersections(){
 
 			if (pointHit.x != NULL){
 				//printf("-----------hit the cube 2 \n");
-				//currentObject = sceneObjectList->at(oldId);
-				//currentObject->shape->currentlySelected = false;
-
-				/*currentObject = sceneObjectList->at(i);
-				currentObject->shape->currentlySelected = true;*/
-				//printf("b4 object hit: %i\n", currentObject->id ); 
-
-				objHit.push_back(currentObject->id);
+				objHit.push_back(newObject->id);
 				hitPoints.push_back(pointHit);
-				printf("object hit: %i\n", currentObject->id ); 
+				printf("object hit: %i\n", newObject->id ); 
 			}else {
-				printf("missed the obj: %i  \n",currentObject->id);
-				//currentObject->shape->currentlySelected = false;
-				
-				currentObject->deselect();
-				//currentObject = sceneObjectList->at(oldId);
-				//currentObject->shape->currentlySelected = false;
+				printf("missed the obj: %i  \n",newObject->id);
+				newObject->deselect();
 			}
 
 		}else {
 			//printf("-------------hit the cube 1 \n");
-			//currentObject = sceneObjectList->at(oldId);
-			//currentObject->shape->currentlySelected = false;
-			/*
-			printf("b4 object hit: %i\n", currentObject->id ); 
-			SceneObject* newObject = sceneObjectList->at(i);
-			currentObject->deselect();
-			newObject->select();
-			currentObject = newObject;
-			*/
-			//currentObject->deselect();
-			objHit.push_back(currentObject->id);
+			objHit.push_back(newObject->id);
 			hitPoints.push_back(pointHit);
-			printf("object hit: %i\n", currentObject->id ); 
+			printf("object hit: %i\n", newObject->id ); 
 		}
 
 		i++;
 	}
-	//}
-
+	
 	//iterate through the hit objects to see which one is closest
 	//print hit pojects
 	printf("ObjectsHit: ");
@@ -1079,7 +1022,7 @@ void calcIntersections(){
 	int minDist =10000000000;
 	int minDistId = oldId;
 
-	point3D pointR0(R0[0],R0[1],R0[2]);
+	point3D pointR0(R0[0],R0[1],R0[2]);		//make R0 into a 3D point
 
 	//get the minimum distance from the objects that you hit
 	for (int i = 0; i < objHit.size();i++){
@@ -1100,6 +1043,8 @@ void calcIntersections(){
 	}
 
 	printf("object selected: %i  \n", minDistId);
+	int deleteId;
+	deleteId = minDistId;
 
 	//printf("old objectID : %i \n", id);  //the id of the old object
 	for (int i = 0; i < sceneObjectList->size() ; i++){
@@ -1116,17 +1061,64 @@ void calcIntersections(){
 		}
 
 	}
-		
-	printf("object sceneIndex : %i  \n", minDistId);
-	SceneObject* newObject = sceneObjectList->at(minDistId);
-	currentObject->deselect();
-	newObject->select();
-	currentObject = newObject;
 
-
-
+	//decide on whether we are going to delete or simply select an object	
+	if (deleteClick == false){
+		printf("DeleteClick is false!\n");
+		printf("object sceneIndex : %i  \n", minDistId);
+		SceneObject* newObject = sceneObjectList->at(minDistId);
+		currentObject->deselect();
+		newObject->select();
+		currentObject = newObject;
+	}else if (deleteClick == true){
+		//printf("Current Id before delete %i\n", currentObject->id);
+		printf("DeleteClick was true! But is now false;\n");
+		if(currentObject != NULL){
+				deleteObject(deleteId);
+		}
+		printf("Object %i was deleted: \n", deleteId );
+		//printf("Current Id before delete %i\n", currentObject->id);
+		deleteClick = false;
+	}
 }
 
+//When you press M, you can iterate through the different objects in the scene
+void iterateObjects(){
+	if (currentObject != NULL){
+		//deselect current object
+		currentObject->shape->currentlySelected = false;
+
+		int id = currentObject->id;		//get the id of the object
+
+		printf("old objectID : %i \n", id);  //the id of the old object
+		for (int i = 0; i < sceneObjectList->size() -1; i++){
+
+			//get id of items in the scene list
+			currentObject = sceneObjectList->at(i);
+			int indexId = currentObject->id;
+
+			//get the index of the old object we were just on
+			if (id == indexId){
+				id = i;
+				break;
+			}
+
+		}
+
+		//if the index is the last one then go to the first object in the list, else go to the next object
+		if (id > sceneObjectList->size() -1){
+				id = 0;
+		}else {
+			id ++;
+		}
+		//printf("newID: %i \n", id);
+		printf("new object %i \n",currentObject->id );
+
+		//select the new current object
+		currentObject = sceneObjectList->at(id);
+		currentObject->shape->currentlySelected = true;
+	}
+}
 
 //OpenGL keyboard function that handles keyboard events
 void keyboard(unsigned char key, int x, int y)
@@ -1462,40 +1454,9 @@ void keyboard(unsigned char key, int x, int y)
 		//iterate though the objects
 		case 'm': 
 		{
-			//deselect current object
-			currentObject->shape->currentlySelected = false;
-
-			int id = currentObject->id;		//get the id of the object
-
-			printf("old objectID : %i \n", id);  //the id of the old object
-			for (int i = 0; i < sceneObjectList->size() -1; i++){
-
-				//get id of items in the scene list
-				currentObject = sceneObjectList->at(i);
-				int indexId = currentObject->id;
-
-				//get the index of the old object we were just on
-				if (id == indexId){
-					id = i;
-					break;
-				}
-
-			}
-
-			//if the index is the last one then go to the first object in the list, else go to the next object
-			if (id > sceneObjectList->size() -1){
-					id = 0;
-			}else {
-				id ++;
-			}
-			printf("newID: %i \n", id);
-			printf("new object %i \n",currentObject->id );
-
-			//select the new current object
-			currentObject = sceneObjectList->at(id);
-			currentObject->shape->currentlySelected = true;
-			
+			iterateObjects();			
 			break;
+
 		}
 		case 't': 
 		{
@@ -1520,9 +1481,6 @@ void keyboard(unsigned char key, int x, int y)
 
 	}
 	glutPostRedisplay();
-
-
-
 }
 
 //OpenGl special function handling all special keyboard events
@@ -1568,8 +1526,8 @@ void special(int key, int x, int y)
 void printInstruction(){
 	printf("\n\n");
 	printf("\t \t Hello and welcome to our 3D Modeller program\n");
-	printf("--------------------By Juan Santana and Cesar Santana-----------------------------\n");
-	printf("-------------------------------------------------------------------------------\n");
+	printf("--------------------By Juan Santana and Cesar Santana----------------------\n");
+	printf("---------------------------------------------------------------------------\n");
 	printf("Q or ESCAP----------------> Quit the program\n");
 	printf("R/r-----------------------> Reset the scene\n");
 	printf("p----------------> Quit the program\n");
@@ -1610,7 +1568,9 @@ void mouse(int btn, int state, int x, int y){
 	if(btn == GLUT_LEFT_BUTTON){
 		if(state == GLUT_DOWN){
 			printf("Left click %i , %i \n", mouseX, mouseY);
-			if(sceneObjectList->size() > 0){
+			if(sceneObjectList->size() > 0 && currentObject != NULL){
+				deleteClick = false;
+				printf("---deleteClick is false!\n");
 				calcIntersections();
 			}
 		}
@@ -1618,7 +1578,13 @@ void mouse(int btn, int state, int x, int y){
 	//create a dent if the right button is pressed
 	}else if(btn == GLUT_RIGHT_BUTTON){
 		if(state == GLUT_DOWN){
-			
+			printf("Right click %i , %i \n", mouseX, mouseY);
+			if (sceneObjectList->size() > 0  && currentObject != NULL){
+				
+				deleteClick = true;
+				printf("---deleteClick is true\n");
+				calcIntersections();
+			}
 		}
 	}
 

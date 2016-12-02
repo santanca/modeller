@@ -12,18 +12,17 @@ class HitBox{
 public:
 	HitBox(float x, float y,float z, float length);	//constructor
 
-	void hello();		//hello function
-	float getX();
+	float getX();			//getters
 	float getY();
 	float getZ();
-	float getLength();
-	void setX(float x);
+	float getLength();		//length getter
+	void setX(float x);		//setters
 	void setY(float y);
 	void setZ(float z);
 
-	float x,y,z;
-	float length;
+	float x,y,z;			//the center of the hitbox
+	float length;			//length of cube
 
-private:
-	float privateVar;
+//private:
+	//float privateVar;
 };
