@@ -1,11 +1,21 @@
 /*
-Computer Graphics 3GC3 Assignment 2: Terrain Modeling 
+Computer Graphics 3GC3 Assignment 3: 3D Modeling 
 
 Cesar Antonio Santana Penner - 001411598
 Date: November 9, 2016
 */
 #ifndef __BASICSHAPELIBRARY_H_
 #define __BASICSHAPELIBRARY_H_
+#ifdef __APPLE__
+#  include <OpenGL/gl.h>
+#  include <OpenGL/glu.h>
+#  include <GLUT/glut.h>
+#else
+#  include <GL/gl.h>
+#  include <GL/glu.h>
+#  include <GL/freeglut.h>
+#endif
+
 #include <math.h>
 class Shape{
 	public:

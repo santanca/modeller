@@ -501,8 +501,9 @@ void loadScene(){
 				//Hit box
 				HitBox *myhitbox = new HitBox(0,0,0,2);
 
+				//groupID = sceneGraph->getCurrentNodeID();
 				//create object
-				SceneObject *newObject = new SceneObject(id,translateNode,rotationNode,scaleNode,shape, materialNode, textureNode, myhitbox);
+				SceneObject *newObject = new SceneObject(groupID,translateNode,rotationNode,scaleNode,shape, materialNode, textureNode, myhitbox);
 				insertObject(newObject);
 				currentObject->texture->applyTexture = texOn;
 			}
@@ -541,6 +542,8 @@ void drawBackGround(){
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	glPushMatrix();
+	glRotatef(angleX,0,0,1);
+	glRotatef(angleY,0,1,0);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, m_amb);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, m_dif);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, m_spec);
@@ -1155,34 +1158,34 @@ void keyboard(unsigned char key, int x, int y)
 			break;
 
 		//Insert a sphere
-		case 'j':{
+		case '6':{
 			insertObject(sphere);
 			break;
 		}
 		//Insert a torus
-		case 'k':{
+		case '7':{
 			insertObject(torus);
 			break;
 		}
 		//Delete the currently selected item object in the scene
-		case 'l':{
+		case 'b':{
 			if(currentObject != NULL){
 				deleteObject(currentObject->id);
 			}
 			break;	
 		}
 		//Insert a cube
-		case ';':{
+		case '8':{
 			insertObject(cube);
 			break;	
 		}
 		//Insert a teapot
-		case '\'':{
+		case '9':{
 			insertObject(teapot);
 			break;	
 		}
 		//Insert a tetrahedron
-		case ',':{
+		case '0':{
 			insertObject(tetrahedron);
 			break;	
 		}
@@ -1358,7 +1361,7 @@ void keyboard(unsigned char key, int x, int y)
 			}
 			break;
 		}
-		case '0':
+		case ')':
 		{
 			if(currentObject != NULL){
 					currentObject->material_id = 1;
@@ -1366,7 +1369,7 @@ void keyboard(unsigned char key, int x, int y)
 			}
 			break;
 		}
-		case '6':
+		case '!':
 		{
 			if(currentObject != NULL){
 					currentObject->texture->applyTexture = true;
@@ -1374,7 +1377,7 @@ void keyboard(unsigned char key, int x, int y)
 			}
 			break;
 		}
-		case '7':
+		case '@':
 		{
 			if(currentObject != NULL){
 					currentObject->texture->applyTexture = true;
@@ -1382,7 +1385,7 @@ void keyboard(unsigned char key, int x, int y)
 			}
 			break;
 		}
-		case '8':
+		case '#':
 		{
 			if(currentObject != NULL){
 					currentObject->texture->applyTexture = true;
@@ -1390,7 +1393,7 @@ void keyboard(unsigned char key, int x, int y)
 			}
 			break;
 		}
-		case '9':
+		case '$':
 		{
 			if(currentObject != NULL){
 					currentObject->texture->applyTexture = true;
@@ -1425,7 +1428,7 @@ void keyboard(unsigned char key, int x, int y)
 			light0_Pos[2] -= 5;
 			glLightfv(GL_LIGHT0, GL_POSITION, light0_Pos);
 			break;
-		case 'S':
+		case 'F':
 			light0_Pos[2] +=5;
 			glLightfv(GL_LIGHT0, GL_POSITION, light0_Pos);
 			break;
@@ -1503,7 +1506,15 @@ void keyboard(unsigned char key, int x, int y)
 			}
 			
 			break;
-		}	
+		}
+		case 'S':{
+			saveScene();
+			break;
+		} 
+		case 'L':{
+			loadScene();
+			break;
+		}
 
 
 	}
@@ -1526,7 +1537,7 @@ void special(int key, int x, int y)
 	{
 	//camera control
 	case GLUT_KEY_LEFT:
-	{	//angleX -= 5;
+	{	angleX -= 5;
 		camPos[0] -= 5;
 		break;
 	}
@@ -1556,9 +1567,36 @@ void special(int key, int x, int y)
 void printInstruction(){
 	printf("\n\n");
 	printf("\t \t Hello and welcome to our 3D Modeller program\n");
-	printf("--------------------By Juan Sanatan and Cesar Santana-----------------------------\n");
+	printf("--------------------By Juan Santana and Cesar Santana-----------------------------\n");
 	printf("-------------------------------------------------------------------------------\n");
-	printf("q or ESCAP----------------> Quit the program\n");
+	printf("Q or ESCAP----------------> Quit the program\n");
+	printf("R/r-----------------------> Reset the scene\n");
+	printf("p----------------> Quit the program\n");
+	printf("6-----------------------> Insert a sphere\n");
+	printf("7-----------------------> Insert a torus\n");
+	printf("8-----------------------> Insert cube\n");
+	printf("9-----------------------> Insert teapot\n");
+	printf("0-----------------------> Insert a tetrahedron\n");
+	printf("b-----------------------> Delete currently selected object\n");
+	printf("wasd--------------------> Move currently selected object on the x-z plane\n");
+	printf("q,e---------------------> Move currently selected object on the y axis\n");
+	printf(";-----------------------> Insert cube\n");
+	printf("x,X---------------------> Rotate currently selected object about the x-axis");
+	printf("z,Z---------------------> Rotate currently selected object about the y-axis\n");
+	printf("c,C---------------------> Rotate currently selected object about the z-axis\n");
+	printf("y,Y---------------------> Scale object along x axis");
+	printf("u,U---------------------> Scale object along y axis\n");
+	printf("i,I---------------------> Scale object along z axis\n");
+	printf("1-6 and )---------------> Apply a material to the object\n");
+	printf("!,@,#,$;----------------> Apply a texture to the object\n");
+	printf("t-----------------------> Toggle texture on object\n");
+	printf("WAGD -------------------> Move light 0\n");
+	printf("klo; -------------------> Move light 1\n");
+	printf("m ----------------------> Iterate through scene objects\n");
+	printf("L or F3 ---------------->  Load scene\n");
+	printf("S or F2-----------------> Save scene\n");
+	printf("Left click -------------> Select object\n");
+	printf("Right click ------------> Delete object\n");
 }
 
 //handles the mouse events
@@ -1663,9 +1701,14 @@ void display(void)
 			camTarget[0], camTarget[1], camTarget[2], 
 			camUp[0], camUp[1], camUp[2]); 
 
-	drawBackGround();
-	sceneGraph->draw();
-	drawLightSources();
+	//glPushMatrix();
+		drawBackGround();
+		glLoadIdentity();
+		glRotatef(angleX,0,0,1);
+		glRotatef(angleY,0,1,0);
+		sceneGraph->draw();
+		drawLightSources();
+	//glPopMatrix();
 
 	printCurrentNode();
 	glutSwapBuffers();
