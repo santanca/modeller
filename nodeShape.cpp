@@ -42,9 +42,9 @@ void NodeShape::nodeSpecificCodeDown(){
 
 		case sphere:
 			sphereOBJ = gluNewQuadric();
-    		gluQuadricDrawStyle(sphereOBJ, GLU_FILL);
-    		gluQuadricTexture(sphereOBJ, GL_TRUE);
-    		gluQuadricNormals(sphereOBJ, GLU_SMOOTH);
+    			gluQuadricDrawStyle(sphereOBJ, GLU_FILL);
+    			gluQuadricTexture(sphereOBJ, GL_TRUE);
+    			gluQuadricNormals(sphereOBJ, GLU_SMOOTH);
 
 			glColor3f(0,1,0);
 			if(currentlySelected){

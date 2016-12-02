@@ -1,9 +1,11 @@
 /*
-Computer Graphics 3GC3 Assignment 3: 3D Modeller
+Computer Graphics 3GC3 Assignment 3: 3D Modeller (Group project)
 
 Cesar Antonio Santana Penner - 001411598
-Juan Carlos Santana Penner - 001411...
-Date: November ..., 2016
+Juan Carlos Santana Penner - 001411625
+Date: December 1, 2016
+
+Description - 3D modeling software created with c++ and openGL.
 */
 #ifdef __APPLE__
 #  include <OpenGL/gl.h>
@@ -29,12 +31,11 @@ using namespace std;
 
 #define PI 3.14159265		//used for hit detection
 
-//global vars to save mouse x/y coord
+/*** GLOBALS  ***/
+//vars to save mouse x/y coord
 int mouseX = 0, mouseY = 0;
-
 int roomSize = 100;
 int nodeID = 0;
-
 float angleX = 0;
 float angleY = 0;
 bool shadingGouraud = true;
@@ -43,15 +44,13 @@ bool light1_on = true;
 int rotationMode = 0;
 int materialMode = 0;
 
+//Scene graph and scene object related variables
 SceneGraph *sceneGraph;
 SceneObject *currentObject;
 int nextChild = 0;
 int currentObjectIndex = 0;
 vector<SceneObject*> *sceneObjectList = new vector<SceneObject*>;
 
-
-/*** Output Stream Varuable***/
-//ofstream myfile;
 
 //HitBox hitBox(0,5,0,2);
 /*** PLANE Struct ***/
@@ -66,7 +65,8 @@ struct Plane{
 Plane floorPlane;
 
 /*** CAMERA LOCATION ***/
-float camPos[] = {roomSize/4,10,roomSize/4}; 	//where the camera is
+//float camPos[] = {roomSize/4,10,roomSize/4}; 	//where the camera is
+float camPos[] = {25,5,25};
 float camUp[] = {0,1,0}; 	//up vector of the camera
 float camTarget[] = {0,0,0}; //where the camera is looking at
 float camSpeed = 0.1f;
@@ -167,6 +167,7 @@ GLubyte* LoadPPM(char* file, int* width, int* height, int* max)
 	return img;
 }
 
+//Method that returns the string of a shape type
 string getShape(int shapeType){
 	if(shapeType == 0){
 		return "root";
@@ -197,92 +198,54 @@ string getShape(int shapeType){
 	}
 }
 
+/*** Saves the current scene to a text file 
+	 The user must specify the file name in the command line ***/
 void saveScene(){
-	//printf("Save Scene, file name: \n");
-
+	//get file name from user
 	string filename;
 	cout << "File name to save: ";
 	cin >> filename;
-	//myfile = ofstream(filename);
 	cout << "Saving scene to: " + filename << endl;
-	//string temp (filename);
 	ofstream myfile (filename.c_str());
-	/*myfile = ofstream(filename);
-	*/
+	
 	if (myfile.is_open()){
-		//myfile << "Writing this to a file.\n";
-		//SceneObject *temp = currentObject;
-		//myfile << "{" << endl;
-
+		//Iterate through the scene list object
 		for (int i = 0; i < sceneObjectList->size(); ++i)
 		{
-			//myfile << "["; 
-			
-			/*myfile << "Object ID:" <<sceneObjectList->at(i)->id << endl;
-			string shape = getShape(sceneObjectList->at(i)->shape->nodeType);
-			myfile << "Shape: " << shape << endl;
-			myfile << "Translate x: " << sceneObjectList->at(i)->translate->trans.x << endl;
-			myfile << "Translate y: " << sceneObjectList->at(i)->translate->trans.y << endl;
-			myfile << "Translate z: " << sceneObjectList->at(i)->translate->trans.z << endl;
-
-			myfile << "Rotate x: " << sceneObjectList->at(i)->rotation->trans.x << endl;
-			myfile << "Rotate y: " << sceneObjectList->at(i)->rotation->trans.y << endl;
-			myfile << "Rotate z: " << sceneObjectList->at(i)->rotation->trans.z << endl;
-
-			myfile << "Scale x: " << sceneObjectList->at(i)->scale->trans.x << endl;
-			myfile << "Scale y: " << sceneObjectList->at(i)->scale->trans.y << endl;
-			myfile << "Scale z: " << sceneObjectList->at(i)->scale->trans.z << endl;
-
-			myfile << "Material: " << sceneObjectList->at(i)->material->material.amb.x << ", " << sceneObjectList->at(i)->material->material.amb.y << ", " <<  sceneObjectList->at(i)->material->material.amb.z << ", " << sceneObjectList->at(i)->material->material.shiny<< endl;
-			myfile << "Texture: " << sceneObjectList->at(i)->texture->texture << endl;
-			myfile << "Texture off: " << sceneObjectList->at(i)->texture->applyTexture << endl;*/
+			//Enter the data of each scene object into the text file
+			//Shape
 			string shape = getShape(sceneObjectList->at(i)->shape->nodeType);
 			myfile << shape << endl;
-			
+			//shape ID
 			myfile <<sceneObjectList->at(i)->id << endl;
-			
+			//Translations
 			myfile << sceneObjectList->at(i)->translate->trans.x << endl;
 			myfile << sceneObjectList->at(i)->translate->trans.y << endl;
 			myfile << sceneObjectList->at(i)->translate->trans.z << endl;
-
+			//Rotations
 			myfile << sceneObjectList->at(i)->rotation->trans.x << endl;
 			myfile << sceneObjectList->at(i)->rotation->trans.y << endl;
 			myfile << sceneObjectList->at(i)->rotation->trans.z << endl;
-
+			//Scale 
 			myfile << sceneObjectList->at(i)->scale->trans.x << endl;
 			myfile << sceneObjectList->at(i)->scale->trans.y << endl;
 			myfile << sceneObjectList->at(i)->scale->trans.z << endl;
-
+			//Material
 			myfile << sceneObjectList->at(i)->material->material.amb.x << endl<< sceneObjectList->at(i)->material->material.amb.y << endl <<  sceneObjectList->at(i)->material->material.amb.z << endl;
 			myfile << sceneObjectList->at(i)->material->material.dif.x << endl<< sceneObjectList->at(i)->material->material.dif.y << endl <<  sceneObjectList->at(i)->material->material.dif.z << endl;
 			myfile << sceneObjectList->at(i)->material->material.spec.x << endl<< sceneObjectList->at(i)->material->material.spec.y << endl <<  sceneObjectList->at(i)->material->material.spec.z << endl;
-
 			myfile << sceneObjectList->at(i)->material->material.shiny<< endl;
-
+			//Texture
 			myfile << sceneObjectList->at(i)->texture->texture << endl;
 			myfile << sceneObjectList->at(i)->texture->applyTexture << endl;
-
-			//myfile << "HitBox: " << sceneObjectList->at(i)->texture->texture << endl;
-
-			//myfile << "]";
 		}
-
-		//myfile << endl <<"}" ;
 		myfile.close();
 	}else{
 		cout << "Unable to open file." << endl;
 	}
 }
 
-void split(char a[]){
-	int sizeOfArray = sizeof(a) / sizeof(a[0]);
-	int i = 0;
-	for (int i = 0; i < sizeOfArray*2; ++i)
-	{
-		cout << a[i] << endl;
-	}
-}
-
+//Methods returns the NodeType given as a string
 NodeType getNodeType(string shape){
 	if (shape == "sphere"){
 		return sphere;
@@ -297,63 +260,51 @@ NodeType getNodeType(string shape){
 	}
 }
 
+//Method prints out the data of a scene object (Used for testing of reading and writing file)
 void printSceneObject(SceneObject* so){
 	printf("Shape: ");
 	cout << getShape(so->shape->nodeType) << endl;
-
 	printf("ID: ");
 	cout << so->translate->id << endl;
-
 	printf("Trans x: ");
 	cout << so->translate->trans.x << endl;
-
 	printf("Trans y: ");
 	cout << so->translate->trans.y << endl;
-
 	printf("Trans z: ");
 	cout << so->translate->trans.z << endl;
-
 	printf("Rot x: ");
 	cout << so->rotation->trans.x << endl;
-
 	printf("Rot y: ");
 	cout << so->rotation->trans.y << endl;
-
 	printf("Rot z: ");
 	cout << so->rotation->trans.z << endl;
-
 	printf("Scale x: ");
 	cout << so->scale->trans.x << endl;
-
 	printf("Scale y: ");
 	cout << so->scale->trans.y << endl;
-
 	printf("Scale z: ");
 	cout << so->scale->trans.z << endl;
-
 	printf("mat amb x: ");
 	cout << so->material->material.amb.x << endl;
-
 	printf("mat amb y: ");
 	cout << so->material->material.amb.y << endl;
-
 	printf("mat amb z: ");
 	cout << so->material->material.amb.z << endl;
-
 	printf("shiny: ");
 	cout << so->material->material.shiny << endl;
-
 	printf("Tex: ");
 	cout << so->texture->texture << endl;
-
 	printf("TexON: ");
 	cout << so->texture->applyTexture << endl;
 }
 
+//Deletes on object from the scene given its ID
 void deleteObject(int id){
-	//if(currentObject != NULL){
+	//delete from scene graph
 	sceneGraph->deleteNode(id);
 	int index = -1;
+	// find the index at which the deleted node 
+	// a the next iteam to be seleted
 	for (int i = 0; i < sceneObjectList->size(); ++i)
 	{
 		if(sceneObjectList->at(i)->id == id){
@@ -362,6 +313,7 @@ void deleteObject(int id){
 		}
 	}
 
+	//make the selected object the mist recently added object, and guard against seg fault (deleting while no objects in the scene)
 	if(sceneObjectList->size()-1 > 0){
 		sceneObjectList->erase(sceneObjectList->begin()+index);
 		currentObject = sceneObjectList->at(sceneObjectList->size()-1);
@@ -372,12 +324,10 @@ void deleteObject(int id){
 		currentObject =NULL;
 		nextChild = 0; 
 	}
-	//}
 }
 
-
+//Insert on object to the scene given the SceneObject
 void insertObject(SceneObject *sceneOBJ){
-
 	sceneObjectList->push_back(sceneOBJ);
 	if(currentObject != NULL){ //printf("Inside INSERT Size of object list: %i\n", sceneObjectList->size());
 	}
@@ -387,28 +337,29 @@ void insertObject(SceneObject *sceneOBJ){
 	currentObject = sceneOBJ;
 	currentObjectIndex = sceneObjectList->size()-1;
 
-		/*sceneGraph.toParent();
-		NodeShape s (sphere);
-		sceneGraph.insertNode(s);	*/
 }
 
+//Reset the scene
 void resetScene(){
-	//currentObject->id
+	//clear the scene graph
 	sceneGraph = new SceneGraph();
+	//delete the objects in the old scene
 	for (int i = 0; i < sceneObjectList->size(); ++i)
 	{
 		deleteObject(sceneObjectList->at(i)->id);
 	}
 	if (sceneObjectList->size() > 1){
 		resetScene();
-		//printf("-------WHAT\n");
 	}
-	deleteObject(sceneObjectList->at(0)->id);
-	//sceneObjectList = new vector<SceneObject*>;
 }
 
+/*** Load the scene from a file 
+	 User must specfiy the file name in the command line***/
 void loadScene(){
+	//clear the scene
 	if(currentObject != NULL){resetScene() ;}
+
+	//Get the file name and open it
 	string file;
 	string line;
 	string filename;
@@ -421,7 +372,7 @@ void loadScene(){
 	ifstream myfile(filename.c_str());
 	if (myfile.is_open()){
 		int i =0;
-		
+		//Sccene Object data
 		int id = 0;
 		NodeType type;
 		NodeTransformation *translateNode;
@@ -441,6 +392,7 @@ void loadScene(){
 		point3D pScale; 
 		float x, y,z;
 
+		//
 	    while ( getline (myfile,line) ){
 	    	//cout << line << endl;
 	    	if(i == 0){
@@ -448,119 +400,69 @@ void loadScene(){
 	    		NodeShape *s = new NodeShape(getNodeType(temp));
 	    		type = getNodeType(temp);
 	    		shape = s;
-	    		//*shape = new NodeShape(getNodeType(temp);
-	    		//string str = getShape(sceneObjectList->at(i)->shape->nodeType);
-				//printf("%s\n", str);
 	    	}else if (i == 1){
-	    		string temp = line;
-	    		id = stoi(temp);
-	    		//printf("id %i\n",id);
+	    		id = stoi(line);
 	    	}else if (i == 2){
-	    		string temp = line;
-	    		float myx = stof(temp);
-	    		x = myx;
-	    		//printf("x : %f\n", x);
+	    		x = stof(line);
 	    	}else if (i == 3){
-	    		string temp = line;
-	    		float myY = stof(temp);
-	    		y = myY;
-	    		//printf("%f\n", y );
+	    		y = stof(line);
 	    	}else if (i == 4){
-	    		string temp = line;
-	    		float myZ = stof(temp);
-	    		z = myZ;
+	    		z = stof(line);
 	    		point3D p1 (x,y,z);
 	    		pTrans = p1;
 	    	}else if (i == 5){
-	    		string temp = line;
-	    		float myx = stof(temp);
-	    		x = myx;
+	    		x = stof(line);
 	    	}else if (i == 6){
-	    		string temp = line;
-	    		float myY = stof(temp);
-	    		y = myY;
-	    		//printf("%f\n", y );
+	    		y = stof(line);
 	    	}else if (i == 7){
-	    		//string temp = line;
-	    		string temp = line;
-	    		float myZ = stof(temp);
-	    		z = myZ;
+	    		z = stof(line);
 	    		point3D p1 (x,y,z);
 	    		pRotate = p1;
 	    	}else if (i == 8){
-	    		string temp = line;
-	    		float myx = stof(temp);
-	    		x = myx;
+	    		x = stof(line);
 	    	}else if (i == 9){
-	    		string temp = line;
-	    		//string temp = line;
-	    		float myY = stof(temp);
-	    		y = myY;
+	    		y = stof(line);
 	    	}else if (i == 10){
-	    		string temp = line;
-	    		float myZ = stof(temp);
-	    		z = myZ;
+	    		z = stof(line);
 	    		point3D p1 (x,y,z);
 	    		pScale = p1;
 	    	}else if (i == 11){
-	    		string temp = line;
-	    		float myx = stof(temp);
-	    		x = myx;
+	    		x = stof(line);
 	    	}else if (i == 12){
-	    		string temp = line;
-	    		float myY = stof(temp);
-	    		y = myY;
+	    		y = stof(line);
 	    	}else if (i == 13){
-	    		string temp = line;
-	    		float myZ = stof(temp);
-	    		z = myZ;
+	    		z = stof(line);
 	    		vec3D v (x,y,z);
 	    		amb = v;		
 	    	}else if (i == 14){
-	    		string temp = line;
-	    		float myx = stof(temp);
-	    		x = myx;
+	    		x = stof(line);
 	    	}else if (i == 15){
-	    		string temp = line;
-	    		float myY = stof(temp);
-	    		y = myY;	    			
+	    		y = stof(line);	    			
 	    	}else if (i == 16){
-	    		string temp = line;
-	    		float myZ = stof(temp);
-	    		z = myZ;
+	    		z = stof(line);
 	    		vec3D v (x,y,z);
 	    		dif = v;
 	    	}else if (i == 17){
-	    		string temp = line;
-	    		float myx = stof(temp);
-	    		x = myx;
+	    		x = stof(line);
 	    	}else if (i == 18){
-	    		string temp = line;
-	    		float myY = stof(temp);
-	    		y = myY;	
+	    		y = stof(line);
 	    	}else if (i == 19){
-	    		string temp = line;
-	    		float myZ = stof(temp);
-	    		z = myZ;
+	    		z = stof(line);
 	    		vec3D v (x,y,z);
 	    		spec = v;
 	    	}else if (i == 20){
-	    		string temp = line;
-	    		shiny = stof(temp);
+	    		shiny = stof(line);
 	    	}else if (i == 21){
-	    		string temp = line;
-	    		tex = stoi(temp);
+	    		tex = stoi(line);
 	    	}else if (i == 22){
-	    		string temp = line;
-	    		texOn = stoi(temp);
+	    		texOn = stoi(line);
 	    		i = -1;
 	    	}
 
-
+	    	//Create the scene object 
 	    	if(i == -1){
 	    		sceneGraph->toRoot();
-	    		
-	    		//Material defualtMat = Material(m_amb, m_dif, m_spec,shiny);
+
 	    		Material defualtMat = Material(amb,dif,spec,shiny);
 
 	    		NodeGroup *group = new NodeGroup();
@@ -587,63 +489,33 @@ void loadScene(){
 				materialNode = new MaterialNode(defualtMat);
 				sceneGraph->insertNode(materialNode);
 				sceneGraph->toChild(0);
-				//printf("Inside Insert Object %f %f %f \n",material->material.amb.x,material->material.amb.y, material->material.amb.z);
-
+				
+				//texture node
 				textureNode = new TextureNode(textures[tex], type);
 				sceneGraph->insertNode(textureNode);
 				sceneGraph->toChild(0);
 
-				//actual shape object
-				//NodeShape *shape = new NodeShape(type);
+				//Shape
 				sceneGraph->insertNode(shape);
 
+				//Hit box
 				HitBox *myhitbox = new HitBox(0,0,0,2);
 
-				/*//material node
-				MaterialNode *material = new MaterialNode(gold);
-				sceneGraph->insertNode(material);*/
-
-
+				//create object
 				SceneObject *newObject = new SceneObject(id,translateNode,rotationNode,scaleNode,shape, materialNode, textureNode, myhitbox);
 				insertObject(newObject);
 				currentObject->texture->applyTexture = texOn;
-				
-				/*printSceneObject(newObject);
-				sceneObjectList->push_back(newObject);
-				if(currentObject != NULL){ printf("Inside INSERT Size of object list: %i\n", sceneObjectList->size());
-				}
-				
-				if (nextChild>1)currentObject->deselect();
-				newObject->select();
-				currentObject = newObject;
-				currentObjectIndex = sceneObjectList->size()-1;*/
 			}
-				//i= -1;
-	    	//}
-
-	    	//string shape2 = getShape(shape->nodeType);
-			//cout << shape2 << endl;
 	    	i++;
 	    }
-	    //glutPostRedisplay();
-
-	    //printf("%f %f %f \n", p.x, p.y, p.z);
-	      //cout << line << '\n';
-	      //printf("%s\n", line );
-	      	//file += line;
-	    	//file.push_back('\n');
 	    
 	    myfile.close();
   	}else{
   		cout << "Unable to open file"; 
   	} 
-
-  
-  	//printf("%s\n", file );
-  	//cout << file ;
 }
 
-
+//Returns node ID
 int getID(){
 	return nodeID++;
 }
@@ -664,7 +536,7 @@ void resetMaterial(){
 }
 
 
-//draw the terrain, using the height map
+//draw the floor 
 void drawBackGround(){
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -674,39 +546,23 @@ void drawBackGround(){
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, m_spec);
 	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shiny);
 
-	//sglutSolidSphere(10,50,50);
+	
 	glBegin(GL_QUADS);
-		//floor
-
 		glColor3f(1,0,0);
 		glNormal3f(0,1,0);
-		glVertex3f(0,0,0);
+		glVertex3f(-roomSize,-1,-roomSize);
 		glNormal3f(0,1,0);
-		glVertex3f(roomSize,0,0);
+		glVertex3f(roomSize,-1,-roomSize);
 		glNormal3f(0,1,0);
-		glVertex3f(roomSize,0,roomSize);
+		glVertex3f(roomSize,-1,roomSize);
 		glNormal3f(0,1,0);
-		glVertex3f(0,0,roomSize);
-
-		/*glColor3f(1,0,0);
-		//wall 1
-		glVertex3f(0,0,0);
-		glVertex3f(0,0,roomSize);
-		glVertex3f(0,roomSize,roomSize);
-		glVertex3f(0,roomSize,0);
-		
-		glColor3f(0,0,1);
-		//wall 2
-		glVertex3f(0,roomSize,0);
-		glVertex3f(roomSize,roomSize,0);
-		glVertex3f(roomSize,0,0);
-		glVertex3f(0,0,0);*/
+		glVertex3f(-roomSize,-1,roomSize);
 	glEnd();
 	glPopMatrix();
 
 }
 
-
+//Inser a scene object into the scene given its NodeType (with deafult values)
 void insertObject(NodeType type){
 	sceneGraph->toRoot();
 
@@ -754,26 +610,15 @@ void insertObject(NodeType type){
 	NodeShape *shape = new NodeShape(type);
 	sceneGraph->insertNode(shape);
 
-
-
-	/*//material node
-	MaterialNode *material = new MaterialNode(gold);
-	sceneGraph->insertNode(material);*/
-
-
+	//create scene object and make it the current object
 	SceneObject* newObject = new SceneObject(groupID,originTranslate,originRotate,originScale,shape, material, texture, myhitbox);
 	sceneObjectList->push_back(newObject);
-	if(currentObject != NULL){ //printf("Inside INSERT Size of object list: %i\n", sceneObjectList->size());
-	}
+	if(currentObject != NULL){}
 	
 	if (nextChild>1)currentObject->deselect();
 	newObject->select();
 	currentObject = newObject;
 	currentObjectIndex = sceneObjectList->size()-1;
-
-		/*sceneGraph.toParent();
-		NodeShape s (sphere);
-		sceneGraph.insertNode(s);	*/
 }
 
 
@@ -1282,23 +1127,17 @@ void calcIntersections(){
 //OpenGL keyboard function that handles keyboard events
 void keyboard(unsigned char key, int x, int y)
 {
-
-	/* key presses move the cube, if it isn't at the extents (hard-coded here) */
 	switch (key)
-	{
+	{	
 		case 'Q':
-		case 27:	//esc key
+		case 27: //esc key
 			exit (0);
-		
-		//
-		case 'r':	
+		case 'R': //reset the scene
 			resetScene();
 			break;
-		//
-		case 'R':
-
+		case 'r': //reset the scene	
+			resetScene();
 			break;
-
 		//toggle lighting
 		case 'p':
 			if(light0_on == true && light1_on == true){
@@ -1315,52 +1154,48 @@ void keyboard(unsigned char key, int x, int y)
 			}
 			break;
 
-		//toggle drawing terrain with quads or traingles
+		//Insert a sphere
 		case 'j':{
-			printf("Inserting a sphere\n");
 			insertObject(sphere);
 			break;
 		}
+		//Insert a torus
 		case 'k':{
-			printf("Inserting a torus\n");	
 			insertObject(torus);
 			break;
 		}
-		//temporary delete object
+		//Delete the currently selected item object in the scene
 		case 'l':{
-			printf("Delete Sphere\n");
 			if(currentObject != NULL){
 				deleteObject(currentObject->id);
 			}
 			break;	
 		}
-		//temporary delete object
+		//Insert a cube
 		case ';':{
-			printf("Insert Cube\n");
 			insertObject(cube);
 			break;	
 		}
-			//temporary delete object
+		//Insert a teapot
 		case '\'':{
-			printf("Insert Cube\n");
 			insertObject(teapot);
 			break;	
 		}
+		//Insert a tetrahedron
 		case ',':{
-			printf("Insert Cone\n");
 			insertObject(tetrahedron);
 			break;	
 		}
-		//translate currently selected object along xz plane
-		case 'w':{
+		//Move the currently selected item
+		case 'w':{	//move -z
 			if(currentObject != NULL){
 				point3D p1 (0,0,-1);
 				currentObject->translateFunc(p1);
-				printf("Current Object %i pos: x: %f , y: %f , z: %f \n", currentObject->id, currentObject->translate->trans.x,currentObject->translate->trans.y,currentObject->translate->trans.z );
+				//printf("Current Object %i pos: x: %f , y: %f , z: %f \n", currentObject->id, currentObject->translate->trans.x,currentObject->translate->trans.y,currentObject->translate->trans.z );
 			}
 			break;
 		}
-		case 'a':{
+		case 'a':{	//move -x
 			if(currentObject != NULL){
 				point3D p1 (-1,0,0);
 				currentObject->translateFunc(p1);
@@ -1368,7 +1203,7 @@ void keyboard(unsigned char key, int x, int y)
 			}
 			break;
 		}
-		case 's':{
+		case 's':{	//move +z
 			if(currentObject != NULL){
 				point3D p1 (0,0,1);
 				currentObject->translateFunc(p1);
@@ -1376,16 +1211,15 @@ void keyboard(unsigned char key, int x, int y)
 			}
 			break;
 		}			
-		case 'd':{
+		case 'd':{ //move +x
 			if(currentObject != NULL){
 				point3D p1 (1,0,0);
 				currentObject->translateFunc(p1);
 				printf("Current Object %i pos: x: %f , y: %f , z: %f \n", currentObject->id, currentObject->translate->trans.x,currentObject->translate->trans.y,currentObject->translate->trans.z );
 			}
 			break;
-		}
-		//translate the currently selected object along the y axis
-		case 'e':{
+		}	
+		case 'e':{	//move +y
 			if(currentObject != NULL){
 				point3D p1 (0,1,0);
 				currentObject->translateFunc(p1);
@@ -1393,7 +1227,7 @@ void keyboard(unsigned char key, int x, int y)
 			}
 			break;
 		}
-		case 'q':{
+		case 'q':{	//move -y
 			if(currentObject != NULL){
 				point3D p1 (0,-1,0);
 				currentObject->translateFunc(p1);
@@ -1403,31 +1237,38 @@ void keyboard(unsigned char key, int x, int y)
 		}
 		//rotate about the x axis
 		case 'x':{
-			if(rotationMode == 0){
-				point3D p1 (1,0,0);
-				currentObject->rotateFunc(p1);
-			}else if (rotationMode == 1){
-				point3D p1 (0,1,0);
-				currentObject->rotateFunc(p1);
-			}else{
-				point3D p1 (0,0,1);
-				currentObject->rotateFunc(p1);
-			}
+			point3D p1 (1,0,0);
+			currentObject->rotateFunc(p1);
 			break;
 		}
+		case 'X':{
+			point3D p1 (-1,0,0);
+			currentObject->rotateFunc(p1);
+			break;
+		}
+		//rotate about the z axis
 		case 'z':{
-			if(rotationMode == 0){
-				point3D p1 (-1,0,0);
-				currentObject->rotateFunc(p1);
-			}else if (rotationMode == 1){
-				point3D p1 (0,-1,0);
-				currentObject->rotateFunc(p1);
-			}else{
-				point3D p1 (0,0,-1);
-				currentObject->rotateFunc(p1);
-			}
+			point3D p1 (0,0,1);
+			currentObject->rotateFunc(p1);
 			break;
 		}
+		case 'Z':{
+			point3D p1 (0,0,-1);
+			currentObject->rotateFunc(p1);
+			break;
+		}
+		//rotate about the y axis
+		case 'c':{
+			point3D p1 (0,1,0);
+			currentObject->rotateFunc(p1);
+			break;
+		}
+		case 'C':{
+			point3D p1 (0,-1,0);
+			currentObject->rotateFunc(p1);
+			break;
+		}
+		//Scaling
 		case 'y':
 		{
 			if(currentObject != NULL){
@@ -1473,23 +1314,6 @@ void keyboard(unsigned char key, int x, int y)
 			if(currentObject != NULL){
 					point3D p1 (0,-1,0);
 					currentObject->scaleFunc(p1);
-			}
-			break;
-		}
-
-
-		//modify object rotation mode
-		case 'c':
-		{
-			if (rotationMode == 0){
-				printf("Rotate about the x axis\n");
-				rotationMode = 1;
-			}else if (rotationMode == 1){
-				printf("Rotate about the y axis\n");
-				rotationMode = 2;
-			}else if (rotationMode == 2){
-				printf("Rotate about the z axis\n");
-				rotationMode = 0;
 			}
 			break;
 		}
@@ -1545,8 +1369,7 @@ void keyboard(unsigned char key, int x, int y)
 		case '6':
 		{
 			if(currentObject != NULL){
-					//currentObject->material_id = 1;
-					//glBindTexture(GL_TEXTURE_2D, textures[0]);
+					currentObject->texture->applyTexture = true;
 					currentObject->texture->texture = textures[0];
 			}
 			break;
@@ -1554,8 +1377,7 @@ void keyboard(unsigned char key, int x, int y)
 		case '7':
 		{
 			if(currentObject != NULL){
-					//currentObject->material_id = 1;
-					//glBindTexture(GL_TEXTURE_2D, textures[1]);
+					currentObject->texture->applyTexture = true;
 					currentObject->texture->texture = textures[1];
 			}
 			break;
@@ -1563,8 +1385,7 @@ void keyboard(unsigned char key, int x, int y)
 		case '8':
 		{
 			if(currentObject != NULL){
-					//currentObject->material_id = 1;
-					//glBindTexture(GL_TEXTURE_2D, textures[1]);
+					currentObject->texture->applyTexture = true;
 					currentObject->texture->texture = textures[2];
 			}
 			break;
@@ -1572,8 +1393,7 @@ void keyboard(unsigned char key, int x, int y)
 		case '9':
 		{
 			if(currentObject != NULL){
-					//currentObject->material_id = 1;
-					//glBindTexture(GL_TEXTURE_2D, textures[1]);
+					currentObject->texture->applyTexture = true;
 					currentObject->texture->texture = textures[3];
 			}
 			break;
@@ -1635,7 +1455,7 @@ void keyboard(unsigned char key, int x, int y)
 			light1_Pos[0] -=5;
 			glLightfv(GL_LIGHT1, GL_POSITION, light1_Pos);
 			break;
-
+		//iterate though the objects
 		case 'm': 
 		{
 			//deselect current object
@@ -1706,16 +1526,21 @@ void special(int key, int x, int y)
 	{
 	//camera control
 	case GLUT_KEY_LEFT:
-		angleX -= 5;
+	{	//angleX -= 5;
+		camPos[0] -= 5;
 		break;
+	}
 	case GLUT_KEY_RIGHT:
 		angleX += 5;
+		camPos[0] += 0.5;
 		break; 	
 	case GLUT_KEY_UP:
 		angleY +=5;
+		camPos[2] -= 0.5;
 		break;
 	case GLUT_KEY_DOWN:
 		angleY -=5;
+		camPos[2] += 0.5;
 		break;
 	case GLUT_KEY_F2:
 		saveScene();
@@ -1775,7 +1600,7 @@ void printCurrentNode(){
 	}
 }
 
-
+//Draw Ligh resources
 void drawLightSources(){
 	glEnable(GL_DEPTH_TEST);	//enable the depth test and enable lights
 	glEnable(GL_LIGHTING);		//enable lighting
@@ -1838,23 +1663,18 @@ void display(void)
 			camTarget[0], camTarget[1], camTarget[2], 
 			camUp[0], camUp[1], camUp[2]); 
 
-
 	drawBackGround();
 	sceneGraph->draw();
 	drawLightSources();
-
-	glutSolidTeapot(1);
 
 	printCurrentNode();
 	glutSwapBuffers();
 }
 
+//Load textures
 void initTexture(){
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	//glBlendFunc(0, 0);
-
-	//add texture code here!
 
 	marbles_texture = LoadPPM("marble.ppm", &width1, &height1, &max1);
 	crates_texture = LoadPPM("crates_256.ppm", &width2, &height2, &max2);
@@ -1898,6 +1718,7 @@ void initTexture(){
 	glDisable(GL_TEXTURE_2D);
 }
 
+//initialize floor
 void floorInit(){
 	floorPlane.px = 0;
     floorPlane.py = 0;
@@ -1909,14 +1730,9 @@ void floorInit(){
     floorPlane.size = 100;
 }
 
-//initilize height map,camera, lighting, shading variables
+//initilize some varibales
 void init(void)
 {
-	//glClearColor(0, 0, 0, 0);
-	//glColor3f(1, 1, 1);
-    //split("Object ID:1");
-
-
     printInstruction();
     glShadeModel(GL_SMOOTH);
 
@@ -1962,7 +1778,6 @@ int main(int argc, char** argv)
 	glCullFace(GL_FRONT);
 	glEnable(GL_CULL_FACE);
 
-	//hitBox.hello();
 
 	glutMainLoop();				//starts the event loop
 
