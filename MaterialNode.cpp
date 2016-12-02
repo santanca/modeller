@@ -1,3 +1,12 @@
+/*
+Computer Graphics 3GC3 Assignment 3: 3D Modeller (Group project)
+
+Cesar Antonio Santana Penner - 001411598
+Juan Carlos Santana Penner - 001411625
+Date: December 1, 2016
+
+Description - Material Node
+*/
 #ifdef __APPLE__
 #  include <OpenGL/gl.h>
 #  include <OpenGL/glu.h>
@@ -11,25 +20,21 @@
 #include <stdio.h>
 using namespace std;
 
+//Empty Constructor
 MaterialNode::MaterialNode(){}
 
+//Constructor given a material
 MaterialNode::MaterialNode(Material mat){
 	material = mat;
 }
 
+//Apply material to the object
 void MaterialNode::nodeSpecificCodeDown(){
 	glPushMatrix();
-		//glLoadIdentity();
-		//printf("Inside Material %f %f %f \n",material.amb.x,material.amb.y, material.amb.z );
-
 		float m_amb[] = {material.amb.x,material.amb.y, material.amb.z, 1.0};
 		float m_dif[] = {material.dif.x, material.dif.y, material.dif.z, 1.0};
 		float m_spec[] = {material.spec.x, material.spec.y, material.spec.z, 1.0};
 		float shiny =10; //10, 100
-		/*float m_amb2[] = {0.33, 0.22, 0.03, 1.0};
-		float m_dif2[] = {0.78, 0.57, 0.11, 1.0};
-		float m_spec2[] = {0.99, 0.91, 0.81, 1.0};
-		float shiny2 = 27;*/
 
 		glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, m_amb);
 		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, m_dif);
@@ -38,4 +43,5 @@ void MaterialNode::nodeSpecificCodeDown(){
 	glPopMatrix();
 }
 
+//Diable the material once the object has been drawn
 void MaterialNode::nodeSpecificCodeUp(){}

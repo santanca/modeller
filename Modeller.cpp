@@ -5,7 +5,7 @@ Cesar Antonio Santana Penner - 001411598
 Juan Carlos Santana Penner - 001411625
 Date: December 1, 2016
 
-Description - 3D modeling software created with c++ and openGL.
+Description - 3D modeling software created with c++ and openGL. This is the main file
 */
 #ifdef __APPLE__
 #  include <OpenGL/gl.h>
@@ -18,7 +18,8 @@ Description - 3D modeling software created with c++ and openGL.
 #endif
 #include "sceneObject.h"
 #include "sceneGraph.h"
-#include "nodeGroup.h"
+#include "GroupNode.h"
+//#include "TransformationNode.h"
 #include "basicMathLibrary.h"
 using std::vector;
 #include <math.h>
@@ -375,10 +376,10 @@ void loadScene(){
 		//Sccene Object data
 		int id = 0;
 		NodeType type;
-		NodeTransformation *translateNode;
-		NodeTransformation *rotationNode;
-		NodeTransformation *scaleNode;
-		NodeShape *shape;
+		TransformationNode *translateNode;
+		TransformationNode *rotationNode;
+		TransformationNode *scaleNode;
+		ShapeNode *shape;
 		MaterialNode *materialNode;
 		vec3D amb;
 		vec3D dif;
@@ -397,7 +398,7 @@ void loadScene(){
 	    	//cout << line << endl;
 	    	if(i == 0){
 	    		string temp = line;
-	    		NodeShape *s = new NodeShape(getNodeType(temp));
+	    		ShapeNode *s = new	ShapeNode(getNodeType(temp));
 	    		type = getNodeType(temp);
 	    		shape = s;
 	    	}else if (i == 1){
@@ -465,23 +466,23 @@ void loadScene(){
 
 	    		Material defualtMat = Material(amb,dif,spec,shiny);
 
-	    		NodeGroup *group = new NodeGroup();
+	    		GroupNode *group = new GroupNode();
 				sceneGraph->insertNode(group);
 				sceneGraph->toChild(nextChild++);
 
 				int groupID = sceneGraph->getCurrentNodeID();
 				//translate node
-				translateNode = new NodeTransformation(translate,pTrans);
+				translateNode = new TransformationNode(translate,pTrans);
 				sceneGraph->insertNode(translateNode);
 				sceneGraph->toChild(0);
 
 				//rotation node
-				rotationNode = new NodeTransformation(rotate,pRotate);
+				rotationNode = new TransformationNode(rotate,pRotate);
 				sceneGraph->insertNode(rotationNode);
 				sceneGraph->toChild(0);
 
 				//scale node
-				scaleNode = new NodeTransformation(scale,pScale);
+				scaleNode = new TransformationNode(scale,pScale);
 				sceneGraph->insertNode(scaleNode);
 				sceneGraph->toChild(0);
 
@@ -579,23 +580,23 @@ void insertObject(NodeType type){
 	HitBox *myhitbox = new HitBox(0,0,0,2);
 
 	//insert group node as the root
-	NodeGroup *group = new NodeGroup();
+	GroupNode *group = new GroupNode();
 	sceneGraph->insertNode(group);
 	sceneGraph->toChild(nextChild++);
 
 	int groupID = sceneGraph->getCurrentNodeID();
 	//translate node
-	NodeTransformation *originTranslate = new NodeTransformation(translate,origin);
+	TransformationNode *originTranslate = new TransformationNode(translate,origin);
 	sceneGraph->insertNode(originTranslate);
 	sceneGraph->toChild(0);
 
 	//rotation node
-	NodeTransformation *originRotate = new NodeTransformation(rotate,origin);
+	TransformationNode *originRotate = new TransformationNode(rotate,origin);
 	sceneGraph->insertNode(originRotate);
 	sceneGraph->toChild(0);
 
 	//scale node
-	NodeTransformation *originScale = new NodeTransformation(scale,scaleOrigin);
+	TransformationNode *originScale = new TransformationNode(scale,scaleOrigin);
 	sceneGraph->insertNode(originScale);
 	sceneGraph->toChild(0);
 
@@ -610,7 +611,7 @@ void insertObject(NodeType type){
 	sceneGraph->toChild(0);
 
 	//actual shape object
-	NodeShape *shape = new NodeShape(type);
+	ShapeNode *shape = new	ShapeNode(type);
 	sceneGraph->insertNode(shape);
 
 	//create scene object and make it the current object

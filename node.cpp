@@ -1,3 +1,12 @@
+/*
+Computer Graphics 3GC3 Assignment 3: 3D Modeller (Group project)
+
+Cesar Antonio Santana Penner - 001411598
+Juan Carlos Santana Penner - 001411625
+Date: December 1, 2016
+
+Description - Node class, parent to all other types of nodes
+*/
 #ifdef __APPLE__
 #  include <OpenGL/gl.h>
 #  include <OpenGL/glu.h>

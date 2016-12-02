@@ -1,8 +1,11 @@
 /*
-Computer Graphics 3GC3 Assignment 2: Terrain Modeling 
+Computer Graphics 3GC3 Assignment 3: 3D Modeller (Group project)
 
 Cesar Antonio Santana Penner - 001411598
-Date: November 9, 2016
+Juan Carlos Santana Penner - 001411625
+Date: December 1, 2016
+
+Description - Basic math class
 */
 #include "basicMathLibrary.h"
 #include <math.h>

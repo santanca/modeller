@@ -1,7 +1,17 @@
+/*
+Computer Graphics 3GC3 Assignment 3: 3D Modeller (Group project)
+
+Cesar Antonio Santana Penner - 001411598
+Juan Carlos Santana Penner - 001411625
+Date: December 1, 2016
+
+Description - Material class
+*/
 #include <stdio.h>
 #include "Material.h"
 #include "basicMathLibrary.h"
 
+//Empty Constructor
 Material::Material(){
 	vec3D amb (0,0,0);
 	vec3D dif (0,0,0);
@@ -9,6 +19,7 @@ Material::Material(){
 	shiny = 0.0f;
 }
 
+//Constructor given its amience, diffuse, specular, shine, in the form of vectors
 Material::Material(vec3D ambient, vec3D diffuse, vec3D specular, float shine){
 	amb = ambient;
 	dif = diffuse;
@@ -16,6 +27,7 @@ Material::Material(vec3D ambient, vec3D diffuse, vec3D specular, float shine){
 	shiny = shine;
 }
 
+//Constructor given its ambience, diffuse, specular, shine, in the form of vectors
 Material::Material(float ambient[4], float diffuse[4], float specular[4], float shine){
 	amb.x = ambient[0];
 	amb.y = ambient[1];
@@ -29,6 +41,7 @@ Material::Material(float ambient[4], float diffuse[4], float specular[4], float 
 	shiny = shine;
 }
 
+//Change the material to emerald
 void Material::setEmerald(){
 	amb.x = 0.0215;
 	amb.y = 0.1745;
@@ -42,6 +55,7 @@ void Material::setEmerald(){
 	shiny = 0.6*128;
 }
 
+//Change the material to ruby
 void Material::setRuby(){
 	amb.x = 0.1745;
 	amb.y = 0.01175;
@@ -55,6 +69,7 @@ void Material::setRuby(){
 	shiny = 0.6*128;
 }
 
+//Change material to yellow rubber
 void Material::setYellowRubber(){
 	amb.x = 0.05;
 	amb.y = 0.05;
@@ -68,6 +83,7 @@ void Material::setYellowRubber(){
 	shiny = 0.78125*128;
 }
 
+//Change material to cyan plastic
 void Material::setCyanPlastic(){
 	amb.x = 0.0;
 	amb.y = 0.1;
@@ -81,6 +97,7 @@ void Material::setCyanPlastic(){
 	shiny = 0.25*128;
 }
 
+//Change material to chrome
 void Material::setChrome(){
 	amb.x = 0.24725;
 	amb.y = 0.1995;
@@ -94,6 +111,7 @@ void Material::setChrome(){
 	shiny = 0.4*128;
 }
 
+//Reset the material to defualt
 void Material::setReset(){
 	amb.x = 0.1;
 	amb.y = 0.1;
