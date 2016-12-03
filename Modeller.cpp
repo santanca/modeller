@@ -82,7 +82,7 @@ float spc0[4] = {1, 1, 1, 1};
 
 
 /*** LIGHT1 PROPERTIES ***/
-float light1_Pos[] = {0,20,0,1};
+float light1_Pos[] = {-roomSize/2,20,-roomSize/2,1};
 float amb1[4] = {0.5, 0.5, 0.5, 1};
 float dif1[4] = {1, 1, 1, 1};
 float spc1[4] = {1, 1, 1, 1};
@@ -134,18 +134,18 @@ GLubyte* LoadPPM(char* file, int* width, int* height, int* max)
 		printf("%s is not a PPM file!\n",file); 
 		exit(0);
 	}
-	printf("%s is a PPM file\n", file);
+	//printf("%s is a PPM file\n", file);
 	fscanf(fd, "%c",&c);
 	while(c == '#') 
 	{
 		fscanf(fd, "%[^\n] ", b);
-		printf("%s\n",b);
+		//printf("%s\n",b);
 		fscanf(fd, "%c",&c);
 	}
 	ungetc(c,fd); 
 	fscanf(fd, "%d %d %d", &n, &m, &k);
 
-	printf("%d rows  %d columns  max value= %d\n",n,m,k);
+	//printf("%d rows  %d columns  max value= %d\n",n,m,k);
 
 	nm = n*m;
 
@@ -515,7 +515,7 @@ void loadScene(){
 	    
 	    myfile.close();
   	}else{
-  		cout << "Unable to open file"; 
+  		cout << "Unable to open file" << endl; 
   	} 
 }
 
@@ -1195,7 +1195,7 @@ void keyboard(unsigned char key, int x, int y)
 			if(currentObject != NULL){
 				point3D p1 (-1,0,0);
 				currentObject->translateFunc(p1);
-				printf("Current Object %i pos: x: %f , y: %f , z: %f \n", currentObject->id, currentObject->translate->trans.x,currentObject->translate->trans.y,currentObject->translate->trans.z );
+				//printf("Current Object %i pos: x: %f , y: %f , z: %f \n", currentObject->id, currentObject->translate->trans.x,currentObject->translate->trans.y,currentObject->translate->trans.z );
 			}
 			break;
 		}
@@ -1203,7 +1203,7 @@ void keyboard(unsigned char key, int x, int y)
 			if(currentObject != NULL){
 				point3D p1 (0,0,1);
 				currentObject->translateFunc(p1);
-				printf("Current Object %i pos: x: %f , y: %f , z: %f \n", currentObject->id, currentObject->translate->trans.x,currentObject->translate->trans.y,currentObject->translate->trans.z );
+				//printf("Current Object %i pos: x: %f , y: %f , z: %f \n", currentObject->id, currentObject->translate->trans.x,currentObject->translate->trans.y,currentObject->translate->trans.z );
 			}
 			break;
 		}			
@@ -1211,7 +1211,7 @@ void keyboard(unsigned char key, int x, int y)
 			if(currentObject != NULL){
 				point3D p1 (1,0,0);
 				currentObject->translateFunc(p1);
-				printf("Current Object %i pos: x: %f , y: %f , z: %f \n", currentObject->id, currentObject->translate->trans.x,currentObject->translate->trans.y,currentObject->translate->trans.z );
+				//printf("Current Object %i pos: x: %f , y: %f , z: %f \n", currentObject->id, currentObject->translate->trans.x,currentObject->translate->trans.y,currentObject->translate->trans.z );
 			}
 			break;
 		}	
@@ -1219,7 +1219,7 @@ void keyboard(unsigned char key, int x, int y)
 			if(currentObject != NULL){
 				point3D p1 (0,1,0);
 				currentObject->translateFunc(p1);
-				printf("Current Object %i pos: x: %f , y: %f , z: %f \n", currentObject->id, currentObject->translate->trans.x,currentObject->translate->trans.y,currentObject->translate->trans.z );
+				//printf("Current Object %i pos: x: %f , y: %f , z: %f \n", currentObject->id, currentObject->translate->trans.x,currentObject->translate->trans.y,currentObject->translate->trans.z );
 			}
 			break;
 		}
@@ -1227,7 +1227,7 @@ void keyboard(unsigned char key, int x, int y)
 			if(currentObject != NULL){
 				point3D p1 (0,-1,0);
 				currentObject->translateFunc(p1);
-				printf("Current Object %i pos: x: %f , y: %f , z: %f \n", currentObject->id, currentObject->translate->trans.x,currentObject->translate->trans.y,currentObject->translate->trans.z );
+				//printf("Current Object %i pos: x: %f , y: %f , z: %f \n", currentObject->id, currentObject->translate->trans.x,currentObject->translate->trans.y,currentObject->translate->trans.z );
 			}
 			break;
 		}
@@ -1434,7 +1434,7 @@ void keyboard(unsigned char key, int x, int y)
 			glLightfv(GL_LIGHT0, GL_POSITION, light0_Pos);
 			break;
 
-		//change position of light 0
+		//change position of light 1
 		case '/':
 			light1_Pos[2] -= 5;
 			glLightfv(GL_LIGHT1, GL_POSITION, light1_Pos);
@@ -1540,17 +1540,17 @@ void printInstruction(){
 	printf("wasd--------------------> Move currently selected object on the x-z plane\n");
 	printf("q,e---------------------> Move currently selected object on the y axis\n");
 	printf(";-----------------------> Insert cube\n");
-	printf("x,X---------------------> Rotate currently selected object about the x-axis");
+	printf("x,X---------------------> Rotate currently selected object about the x-axis\n");
 	printf("z,Z---------------------> Rotate currently selected object about the y-axis\n");
 	printf("c,C---------------------> Rotate currently selected object about the z-axis\n");
-	printf("y,Y---------------------> Scale object along x axis");
+	printf("y,Y---------------------> Scale object along x axis\n");
 	printf("u,U---------------------> Scale object along y axis\n");
 	printf("i,I---------------------> Scale object along z axis\n");
 	printf("1-6 and )---------------> Apply a material to the object\n");
 	printf("!,@,#,$;----------------> Apply a texture to the object\n");
 	printf("t-----------------------> Toggle texture on object\n");
-	printf("WAGD -------------------> Move light 0\n");
-	printf("klo; -------------------> Move light 1\n");
+	printf("WFDA -------------------> Move light 0\n");
+	printf("/JKH -------------------> Move light 1\n");
 	printf("m ----------------------> Iterate through scene objects\n");
 	printf("L or F3 ---------------->  Load scene\n");
 	printf("S or F2-----------------> Save scene\n");
@@ -1567,10 +1567,10 @@ void mouse(int btn, int state, int x, int y){
 	//create a bump if the left mouse button is pressed
 	if(btn == GLUT_LEFT_BUTTON){
 		if(state == GLUT_DOWN){
-			printf("Left click %i , %i \n", mouseX, mouseY);
+			//printf("Left click %i , %i \n", mouseX, mouseY);
 			if(sceneObjectList->size() > 0 && currentObject != NULL){
 				deleteClick = false;
-				printf("---deleteClick is false!\n");
+				//printf("---deleteClick is false!\n");
 				calcIntersections();
 			}
 		}
@@ -1578,11 +1578,11 @@ void mouse(int btn, int state, int x, int y){
 	//create a dent if the right button is pressed
 	}else if(btn == GLUT_RIGHT_BUTTON){
 		if(state == GLUT_DOWN){
-			printf("Right click %i , %i \n", mouseX, mouseY);
+			//printf("Right click %i , %i \n", mouseX, mouseY);
 			if (sceneObjectList->size() > 0  && currentObject != NULL){
 				
 				deleteClick = true;
-				printf("---deleteClick is true\n");
+				//printf("---deleteClick is true\n");
 				calcIntersections();
 			}
 		}

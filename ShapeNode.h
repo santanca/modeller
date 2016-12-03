@@ -24,8 +24,8 @@ public:
 	bool currentlySelected;
 	Shape s;
 	GLUquadricObj *sphereOBJ;
-	virtual void nodeSpecificCodeDown();
-	virtual void nodeSpecificCodeUp();
+	virtual void pushNode();
+	virtual void popNode();
 };
 
 #endif

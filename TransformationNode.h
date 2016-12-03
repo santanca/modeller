@@ -22,8 +22,8 @@ public:
 	TransformationNode();
 	TransformationNode(NodeType type, point3D myP);	
 	point3D trans;
-	virtual void nodeSpecificCodeDown();
-	virtual void nodeSpecificCodeUp();
+	virtual void pushNode();
+	virtual void popNode();
 };
 
 #endif

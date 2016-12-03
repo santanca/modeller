@@ -36,7 +36,7 @@ Node::Node(){
 
 //Draw the node 
 void Node::draw(){
-	nodeSpecificCodeDown();
+	pushNode();
 
 	//iterate through the children and draw each child
 	for (int i = 0; i < children->size(); ++i)
@@ -45,11 +45,11 @@ void Node::draw(){
 		children->at(i)->draw();
 	}
 
-	nodeSpecificCodeUp();
+	popNode();
 
 
 }
 
-void Node::nodeSpecificCodeDown(){}
-void Node::nodeSpecificCodeUp(){}
+void Node::pushNode(){}
+void Node::popNode(){}
 

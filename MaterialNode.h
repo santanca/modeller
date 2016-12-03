@@ -20,8 +20,8 @@ class MaterialNode: public Node{
 		MaterialNode();
 		MaterialNode(Material mat);
 		Material material;
-		virtual void nodeSpecificCodeDown();
-		virtual void nodeSpecificCodeUp();
+		virtual void pushNode();
+		virtual void popNode();
 
 	private:
 };

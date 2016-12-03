@@ -38,7 +38,7 @@ TextureNode::TextureNode(GLuint mytexture, NodeType type){
 }
 
 //Apply the texture onto the object
-void TextureNode::nodeSpecificCodeDown(){
+void TextureNode::pushNode(){
 	//if the texturing is enabled for this oject
 	if(applyTexture == true){
 		//special case for torus texturing. Because calculating texture coordinates is difficult
@@ -53,7 +53,7 @@ void TextureNode::nodeSpecificCodeDown(){
 };
 
 //Once the object has been drawn, disables the texture
-void TextureNode::nodeSpecificCodeUp(){
+void TextureNode::popNode(){
 	//Disables the texuring one the object hass been drawn
 	if (applyTexture == true){
 		if(textureType == torus){

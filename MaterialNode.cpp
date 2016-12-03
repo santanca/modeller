@@ -29,7 +29,7 @@ MaterialNode::MaterialNode(Material mat){
 }
 
 //Apply material to the object
-void MaterialNode::nodeSpecificCodeDown(){
+void MaterialNode::pushNode(){
 	glPushMatrix();
 		float m_amb[] = {material.amb.x,material.amb.y, material.amb.z, 1.0};
 		float m_dif[] = {material.dif.x, material.dif.y, material.dif.z, 1.0};
@@ -44,4 +44,4 @@ void MaterialNode::nodeSpecificCodeDown(){
 }
 
 //Diable the material once the object has been drawn
-void MaterialNode::nodeSpecificCodeUp(){}
+void MaterialNode::popNode(){}

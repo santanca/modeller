@@ -17,7 +17,7 @@ TransformationNode::TransformationNode(NodeType mytype, point3D myP){
 	trans = myP;
 }
 
-void TransformationNode::nodeSpecificCodeDown(){
+void TransformationNode::pushNode(){
 	switch(nodeType){
 		case translate:
 			glTranslatef(trans.x,trans.y,trans.z);
@@ -34,4 +34,4 @@ void TransformationNode::nodeSpecificCodeDown(){
 	}
 }
 
-void TransformationNode::nodeSpecificCodeUp(){}
+void TransformationNode::popNode(){}

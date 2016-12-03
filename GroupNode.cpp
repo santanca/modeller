@@ -1,3 +1,12 @@
+/*
+Computer Graphics 3GC3 Assignment 3: 3D Modeller (Group project)
+
+Cesar Antonio Santana Penner - 001411598
+Juan Carlos Santana Penner - 001411625
+Date: December 1, 2016
+
+Description - Group Node
+*/
 #ifdef __APPLE__
 #  include <OpenGL/gl.h>
 #  include <OpenGL/glu.h>
@@ -15,10 +24,10 @@ GroupNode::GroupNode(){
 	nodeType = group;
 }
 
-void GroupNode::nodeSpecificCodeDown(){
+void GroupNode::pushNode(){
 	glPushMatrix();
 }
 
-void GroupNode::nodeSpecificCodeUp(){
+void GroupNode::popNode(){
 	glPopMatrix();
 }

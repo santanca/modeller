@@ -32,8 +32,8 @@ class TextureNode: public Node{
 		GLuint texture;	//the texture that this will have 
 		NodeType textureType; //the node type
 		bool applyTexture;	//texture toggling
-		virtual void nodeSpecificCodeDown();
-		virtual void nodeSpecificCodeUp();
+		virtual void pushNode();
+		virtual void popNode();
 
 	private:
 };

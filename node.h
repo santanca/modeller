@@ -52,8 +52,8 @@ class Node{
 		NodeType nodeType;
 		void draw();
 		
-		virtual void nodeSpecificCodeDown();
-		virtual void nodeSpecificCodeUp();
+		virtual void pushNode();
+		virtual void popNode();
 	private:
 };
 

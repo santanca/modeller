@@ -19,6 +19,7 @@ Description - Shape node
 #include "ShapeNode.h"
 using namespace std;
 
+//Constructor
 ShapeNode::ShapeNode(NodeType type){
 	nodeType = type;
 	currentlySelected = false;
@@ -29,16 +30,15 @@ ShapeNode::ShapeNode(NodeType type){
 
 }
 
-void ShapeNode::nodeSpecificCodeDown(){	
-	//glTranslatef(50,20 ,50);
-	//glColor3f(0,1,0);
+//Draw the shape
+void ShapeNode::pushNode(){	
+	//draw the shape based on the type of node
 	glColor3f(0,1,0);
 	switch(nodeType){
 		case cube:
 			glColor3f(0.5,0.5,0.5);
 			if(currentlySelected){
 				glPushMatrix();
-					//glDisable(GL_COLOR_MATERIAL);
 					glDisable(GL_LIGHTING);
 					glColor3f(0,1,0);
 					glutWireCube(2);
@@ -58,9 +58,7 @@ void ShapeNode::nodeSpecificCodeDown(){
 			glColor3f(0,1,0);
 			if(currentlySelected){
 				glPushMatrix();
-					//glDisable(GL_COLOR_MATERIAL);
 					glDisable(GL_LIGHTING);
-					//glLoadIdentity();
 					glColor3f(0,1,0);
 					glutWireCube(2);
 					glEnable(GL_LIGHTING);
@@ -76,50 +74,40 @@ void ShapeNode::nodeSpecificCodeDown(){
 				
 				if(currentlySelected){
 				glPushMatrix();
-					//glDisable(GL_COLOR_MATERIAL);
 					glDisable(GL_LIGHTING);
 					glColor3f(0,1,0);
 					glutWireCube(2);
 				glPopMatrix();
 				}
 				glEnable(GL_LIGHTING);
-				
-				//glRotatef(30,0,1,0);
-				//glutWireCube(2);
 				glutSolidTorus(0.3,0.6,100,100);
-				//glutSolidTorus(10,20,100,100);
 			break;
 
 		case teapot:
 			if(currentlySelected){
 				glPushMatrix();
-					//glDisable(GL_COLOR_MATERIAL);
 					glDisable(GL_LIGHTING);
 					glColor3f(0,1,0);
 					glutWireCube(2);
 				glPopMatrix();
 			}
 			glEnable(GL_LIGHTING);
-			//glutWireTeapot(1);
 			glutSolidTeapot(1);
 			break;
 
 		case tetrahedron:
 			if(currentlySelected){
 				glPushMatrix();
-					//glDisable(GL_COLOR_MATERIAL);
 					glDisable(GL_LIGHTING);
-					//glColor3f(0,1,0);
 					glutWireCube(2);
 					glEnable(GL_LIGHTING);
 				glPopMatrix();
 			}
-			//glutWireTeapot(1);
-			//glutSolidCone(1,1,100,100);
 			s.glutSolidTetrahedron2();
 			//glutSolidTetrahedron();
 			break;
 	}
 }
 
-void ShapeNode::nodeSpecificCodeUp(){}
+
+void ShapeNode::popNode(){}
