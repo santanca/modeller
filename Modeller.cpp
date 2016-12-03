@@ -1461,7 +1461,7 @@ void keyboard(unsigned char key, int x, int y)
 		case 't': 
 		{
 			if (currentObject->texture->applyTexture == false){
-				printf("Current object apply texture\n");
+				//printf("Current object apply texture\n");
 				currentObject->texture->applyTexture = true;
 			}else{
 				currentObject->texture->applyTexture = false;
@@ -1528,9 +1528,9 @@ void printInstruction(){
 	printf("\t \t Hello and welcome to our 3D Modeller program\n");
 	printf("--------------------By Juan Santana and Cesar Santana----------------------\n");
 	printf("---------------------------------------------------------------------------\n");
-	printf("Q or ESCAP----------------> Quit the program\n");
-	printf("R/r-----------------------> Reset the scene\n");
-	printf("p----------------> Quit the program\n");
+	printf("Q or ESCAP--------------> Quit the program\n");
+	printf("R/r---------------------> Reset the scene\n");
+	printf("p-----------------------> Toggle lighting\n");
 	printf("6-----------------------> Insert a sphere\n");
 	printf("7-----------------------> Insert a torus\n");
 	printf("8-----------------------> Insert cube\n");
@@ -1539,7 +1539,6 @@ void printInstruction(){
 	printf("b-----------------------> Delete currently selected object\n");
 	printf("wasd--------------------> Move currently selected object on the x-z plane\n");
 	printf("q,e---------------------> Move currently selected object on the y axis\n");
-	printf(";-----------------------> Insert cube\n");
 	printf("x,X---------------------> Rotate currently selected object about the x-axis\n");
 	printf("z,Z---------------------> Rotate currently selected object about the y-axis\n");
 	printf("c,C---------------------> Rotate currently selected object about the z-axis\n");
@@ -1552,7 +1551,7 @@ void printInstruction(){
 	printf("WFDA -------------------> Move light 0\n");
 	printf("/JKH -------------------> Move light 1\n");
 	printf("m ----------------------> Iterate through scene objects\n");
-	printf("L or F3 ---------------->  Load scene\n");
+	printf("L or F3 ----------------> Load scene\n");
 	printf("S or F2-----------------> Save scene\n");
 	printf("Left click -------------> Select object\n");
 	printf("Right click ------------> Delete object\n");
