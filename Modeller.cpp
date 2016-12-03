@@ -78,14 +78,14 @@ float camTarget[] = {0,0,0}; //where the camera is looking at
 float camSpeed = 0.1f;
 
 /*** LIGHT0 PROPERTIES ***/
-float light0_Pos[] = {roomSize/2, 20, roomSize/2, 1};
+float light0_Pos[] = {25, 15, 65, 1};
 float amb0[4] = {0.5, 0.5, 0.5, 1};
 float dif0[4] = {1, 1, 1, 1};
 float spc0[4] = {1, 1, 1, 1};
 
 
 /*** LIGHT1 PROPERTIES ***/
-float light1_Pos[] = {-roomSize/2,20,-roomSize/2,1};
+float light1_Pos[] = {0,20,0,1};
 float amb1[4] = {0.5, 0.5, 0.5, 1};
 float dif1[4] = {1, 1, 1, 1};
 float spc1[4] = {1, 1, 1, 1};
@@ -567,17 +567,19 @@ void drawBackGround(){
 	glBegin(GL_QUADS);
 		glColor3f(1,0,0);
 		
-		glNormal3f(norm1.x,norm1.y,norm1.z);
+		glNormal3f(-norm1.x,-norm1.y,-norm1.z);
 		glVertex3f(p1.x,p1.y,p1.z);
 		
-		glNormal3f(norm2.x,norm2.y,norm2.z);
-		glVertex3f(p2.x,p2.y,p2.z);
+		glNormal3f(-norm4.x,-norm4.y,-norm4.z);
+		glVertex3f(p4.x,p4.y,p4.z);
 		
-		glNormal3f(norm3.x,norm3.y,norm3.z);
+		glNormal3f(-norm3.x,-norm3.y,-norm3.z);
 		glVertex3f(p3.x,p3.y,p3.z);
 		
-		glNormal3f(norm4.x,norm4.y,norm4.z);
-		glVertex3f(p4.x,p4.y,p4.z);
+		glNormal3f(-norm2.x,-norm2.y,-norm2.z);
+		glVertex3f(p2.x,p2.y,p2.z);
+		
+
 	glEnd();
 	glPopMatrix();
 
@@ -1435,19 +1437,27 @@ void keyboard(unsigned char key, int x, int y)
 		*/
 		//change position of light 0
 		case 'W':
+			
 			light0_Pos[2] -= 5;
+			printf("%f, %f\n", light0_Pos[0], light0_Pos[2] );
 			glLightfv(GL_LIGHT0, GL_POSITION, light0_Pos);
 			break;
 		case 'F':
+			
 			light0_Pos[2] +=5;
 			glLightfv(GL_LIGHT0, GL_POSITION, light0_Pos);
+			printf("%f, %f\n", light0_Pos[0], light0_Pos[2] );
 			break;
 		case 'D':
+			
 			light0_Pos[0] +=5;
+			printf("%f, %f\n", light0_Pos[0], light0_Pos[2] );
 			glLightfv(GL_LIGHT0, GL_POSITION, light0_Pos);
 			break;
 		case 'A':
+			
 			light0_Pos[0] -=5;
+			printf("%f, %f\n", light0_Pos[0], light0_Pos[2] );
 			glLightfv(GL_LIGHT0, GL_POSITION, light0_Pos);
 			break;
 
@@ -1633,7 +1643,7 @@ void drawLightSources(){
 		glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, m_spec2);
 		glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shiny2);
 
-		glLoadIdentity();
+		//glLoadIdentity();
 		if(light0_on == true){
 		glEnable(GL_LIGHT0);		//turn on light bulb 0	
 			glLightfv(GL_LIGHT0, GL_POSITION, light1_Pos);
@@ -1646,6 +1656,7 @@ void drawLightSources(){
 				glTranslatef(light0_Pos[0],light0_Pos[1],light0_Pos[2]);
 				glutSolidSphere(1,50,50);
 			glPopMatrix();
+			glLightfv(GL_LIGHT0, GL_POSITION, light0_Pos);
 		}
 
 		if(light1_on == true){
@@ -1660,6 +1671,7 @@ void drawLightSources(){
 				glTranslatef(light1_Pos[0], light1_Pos[1], light1_Pos[2]);
 				glutSolidSphere(1,50,50);
 			glPopMatrix();
+			glLightfv(GL_LIGHT1, GL_POSITION, light1_Pos);
 		}
 
 	glPopMatrix();
@@ -1801,7 +1813,7 @@ int main(int argc, char** argv)
 	init();
 
 	glFrontFace(GL_CCW);
-	glCullFace(GL_FRONT);
+	glCullFace(GL_BACK);
 	glEnable(GL_CULL_FACE);
 
 
