@@ -86,7 +86,7 @@ void ShapeNode::pushNode(){
 		case teapot:
 			if(currentlySelected){
 				glPushMatrix();
-					glDisable(GL_LIGHTING);
+					//glDisable(890xGL_LIGHTING);
 					glColor3f(0,1,0);
 					glutWireCube(2);
 				glPopMatrix();

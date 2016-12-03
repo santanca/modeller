@@ -19,7 +19,6 @@ Description - 3D modeling software created with c++ and openGL. This is the main
 #include "sceneObject.h"
 #include "sceneGraph.h"
 #include "GroupNode.h"
-//#include "TransformationNode.h"
 #include "basicMathLibrary.h"
 using std::vector;
 #include <math.h>
@@ -55,7 +54,6 @@ int currentObjectIndex = 0;
 vector<SceneObject*> *sceneObjectList = new vector<SceneObject*>;
 
 
-//HitBox hitBox(0,5,0,2);
 /*** PLANE Struct ***/
 struct Plane{
 	float px, py,pz;
@@ -66,6 +64,11 @@ struct Plane{
 } ;
 
 Plane floorPlane;
+vec3D p1(-roomSize,-1,-roomSize);
+vec3D p2(roomSize, -1, -roomSize);
+vec3D p3(roomSize,-1,roomSize);
+vec3D p4(-roomSize,-1,roomSize);
+
 
 /*** CAMERA LOCATION ***/
 //float camPos[] = {roomSize/4,10,roomSize/4}; 	//where the camera is
@@ -552,17 +555,29 @@ void drawBackGround(){
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, m_spec);
 	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shiny);
 
-	
+	vec3D norm1 = p1.getNormal(p2);
+	vec3D norm2 = p2.getNormal(p3);
+	vec3D norm3 = p3.getNormal(p4);
+	vec3D norm4 = p4.getNormal(p1);
+
+	//floorPlane.normX = norm1.x;
+	//floorPlane.normY = norm1.y;
+	//floorPlane.normZ = norm1.z;
+
 	glBegin(GL_QUADS);
 		glColor3f(1,0,0);
-		glNormal3f(0,1,0);
-		glVertex3f(-roomSize,-1,-roomSize);
-		glNormal3f(0,1,0);
-		glVertex3f(roomSize,-1,-roomSize);
-		glNormal3f(0,1,0);
-		glVertex3f(roomSize,-1,roomSize);
-		glNormal3f(0,1,0);
-		glVertex3f(-roomSize,-1,roomSize);
+		
+		glNormal3f(norm1.x,norm1.y,norm1.z);
+		glVertex3f(p1.x,p1.y,p1.z);
+		
+		glNormal3f(norm2.x,norm2.y,norm2.z);
+		glVertex3f(p2.x,p2.y,p2.z);
+		
+		glNormal3f(norm3.x,norm3.y,norm3.z);
+		glVertex3f(p3.x,p3.y,p3.z);
+		
+		glNormal3f(norm4.x,norm4.y,norm4.z);
+		glVertex3f(p4.x,p4.y,p4.z);
 	glEnd();
 	glPopMatrix();
 
@@ -631,6 +646,8 @@ void insertObject(NodeType type){
 
 //Test if the floor is clicked
 void floorIntersection(GLdouble *Rd, GLdouble *R0){
+	printf("Check floor intersection \n");
+
 	float D = -1*floorPlane.normX*floorPlane.px - floorPlane.normY*floorPlane.py - floorPlane.normZ*floorPlane.pz;
 	//printf("D: %f \n", D);
 
@@ -651,8 +668,8 @@ void floorIntersection(GLdouble *Rd, GLdouble *R0){
 		P[2] = R0[2] + t*Rd[2];
 
 				//Y Plane
-		if ((0 < P[2] && P[2] < (100) )&& (0 < P[0] && P[0] < (100) )){
-			//printf("Floor intersection %f , %f , %f \n", P[0], P[1], P[2] );
+		if ((-roomSize < P[2] && P[2] < (roomSize) )&& (-roomSize < P[0] && P[0] < (roomSize) )){
+			printf("Floor intersection %f , %f , %f \n", P[0], P[1], P[2] );
 		}
 		//printf("intersection %f , %f , %f \n", P[0], P[1], P[2] );
 	}
@@ -1729,14 +1746,14 @@ void initTexture(){
 
 //initialize floor
 void floorInit(){
-	floorPlane.px = 0;
-    floorPlane.py = 0;
-    floorPlane.pz = 0;
+	floorPlane.px = -roomSize;
+    floorPlane.py =-1;
+    floorPlane.pz = -roomSize;
     floorPlane.normX = 0;
     floorPlane.normY = 1;
     floorPlane.normZ = 0;
     floorPlane.d = 0;
-    floorPlane.size = 100;
+    floorPlane.size = 2*roomSize;
 }
 
 //initilize some varibales
