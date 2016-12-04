@@ -563,7 +563,11 @@ void drawBackGround(){
 	//floorPlane.normX = norm1.x;
 	//floorPlane.normY = norm1.y;
 	//floorPlane.normZ = norm1.z;
+	glTranslatef(0,-1.5,0);
+	glScalef(roomSize,0.5,roomSize);
+	glutSolidCube(1);
 
+/*	
 	glBegin(GL_QUADS);
 		glColor3f(1,0,0);
 		
@@ -581,6 +585,7 @@ void drawBackGround(){
 		
 
 	glEnd();
+	*/
 	glPopMatrix();
 
 }
@@ -648,7 +653,7 @@ void insertObject(NodeType type){
 
 //Test if the floor is clicked
 void floorIntersection(GLdouble *Rd, GLdouble *R0){
-	printf("Check floor intersection \n");
+	//printf("Check floor intersection \n");
 
 	float D = -1*floorPlane.normX*floorPlane.px - floorPlane.normY*floorPlane.py - floorPlane.normZ*floorPlane.pz;
 	//printf("D: %f \n", D);
@@ -671,7 +676,7 @@ void floorIntersection(GLdouble *Rd, GLdouble *R0){
 
 				//Y Plane
 		if ((-roomSize < P[2] && P[2] < (roomSize) )&& (-roomSize < P[0] && P[0] < (roomSize) )){
-			printf("Floor intersection %f , %f , %f \n", P[0], P[1], P[2] );
+			//printf("Floor intersection %f , %f , %f \n", P[0], P[1], P[2] );
 		}
 		//printf("intersection %f , %f , %f \n", P[0], P[1], P[2] );
 	}
@@ -1014,9 +1019,9 @@ void calcIntersections(){
 				//printf("-----------hit the cube 2 \n");
 				objHit.push_back(newObject->id);
 				hitPoints.push_back(pointHit);
-				printf("object hit: %i\n", newObject->id ); 
+				//printf("object hit: %i\n", newObject->id ); 
 			}else {
-				printf("missed the obj: %i  \n",newObject->id);
+				//printf("missed the obj: %i  \n",newObject->id);
 				newObject->deselect();
 			}
 
@@ -1024,7 +1029,7 @@ void calcIntersections(){
 			//printf("-------------hit the cube 1 \n");
 			objHit.push_back(newObject->id);
 			hitPoints.push_back(pointHit);
-			printf("object hit: %i\n", newObject->id ); 
+			//printf("object hit: %i\n", newObject->id ); 
 		}
 
 		i++;
@@ -1032,12 +1037,13 @@ void calcIntersections(){
 	
 	//iterate through the hit objects to see which one is closest
 	//print hit pojects
+	/*
 	printf("ObjectsHit: ");
 	for (int i = 0; i < objHit.size();i++){
 		printf("%i, ", objHit[i] );
 	}
 	printf("\n");
-
+	*/
 	int minDist =10000000000;
 	int minDistId = oldId;
 
@@ -1052,7 +1058,7 @@ void calcIntersections(){
 
 		point3D point0(x0,y0,z0);
 		float dist = pointR0.Distance(point0);
-		printf("distance from point : %f \n", dist);
+		//printf("distance from point : %f \n", dist);
 
 		if (dist < minDist){
 			minDist = dist;
@@ -1061,7 +1067,7 @@ void calcIntersections(){
 
 	}
 
-	printf("object selected: %i  \n", minDistId);
+	//printf("object selected: %i  \n", minDistId);
 	int deleteId;
 	deleteId = minDistId;
 
@@ -1083,19 +1089,19 @@ void calcIntersections(){
 
 	//decide on whether we are going to delete or simply select an object	
 	if (deleteClick == false){
-		printf("DeleteClick is false!\n");
-		printf("object sceneIndex : %i  \n", minDistId);
+		//printf("DeleteClick is false!\n");
+		//printf("object sceneIndex : %i  \n", minDistId);
 		SceneObject* newObject = sceneObjectList->at(minDistId);
 		currentObject->deselect();
 		newObject->select();
 		currentObject = newObject;
 	}else if (deleteClick == true){
 		//printf("Current Id before delete %i\n", currentObject->id);
-		printf("DeleteClick was true! But is now false;\n");
+		//printf("DeleteClick was true! But is now false;\n");
 		if(currentObject != NULL){
 				deleteObject(deleteId);
 		}
-		printf("Object %i was deleted: \n", deleteId );
+		//printf("Object %i was deleted: \n", deleteId );
 		//printf("Current Id before delete %i\n", currentObject->id);
 		deleteClick = false;
 	}
@@ -1109,7 +1115,7 @@ void iterateObjects(){
 
 		int id = currentObject->id;		//get the id of the object
 
-		printf("old objectID : %i \n", id);  //the id of the old object
+		//printf("old objectID : %i \n", id);  //the id of the old object
 		for (int i = 0; i < sceneObjectList->size() -1; i++){
 
 			//get id of items in the scene list
@@ -1131,7 +1137,7 @@ void iterateObjects(){
 			id ++;
 		}
 		//printf("newID: %i \n", id);
-		printf("new object %i \n",currentObject->id );
+		//printf("new object %i \n",currentObject->id );
 
 		//select the new current object
 		currentObject = sceneObjectList->at(id);
@@ -1439,25 +1445,25 @@ void keyboard(unsigned char key, int x, int y)
 		case 'W':
 			
 			light0_Pos[2] -= 5;
-			printf("%f, %f\n", light0_Pos[0], light0_Pos[2] );
+			//printf("%f, %f\n", light0_Pos[0], light0_Pos[2] );
 			glLightfv(GL_LIGHT0, GL_POSITION, light0_Pos);
 			break;
 		case 'F':
 			
 			light0_Pos[2] +=5;
 			glLightfv(GL_LIGHT0, GL_POSITION, light0_Pos);
-			printf("%f, %f\n", light0_Pos[0], light0_Pos[2] );
+			//printf("%f, %f\n", light0_Pos[0], light0_Pos[2] );
 			break;
 		case 'D':
 			
 			light0_Pos[0] +=5;
-			printf("%f, %f\n", light0_Pos[0], light0_Pos[2] );
+			//printf("%f, %f\n", light0_Pos[0], light0_Pos[2] );
 			glLightfv(GL_LIGHT0, GL_POSITION, light0_Pos);
 			break;
 		case 'A':
 			
 			light0_Pos[0] -=5;
-			printf("%f, %f\n", light0_Pos[0], light0_Pos[2] );
+			//printf("%f, %f\n", light0_Pos[0], light0_Pos[2] );
 			glLightfv(GL_LIGHT0, GL_POSITION, light0_Pos);
 			break;
 
