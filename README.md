@@ -11,4 +11,4 @@ Description - 3D modeling software created with c++ using openGL and freeGlut. I
 
 ![Alt text](/mainImage.png?raw=true "Final Product") 
 
-[Open GL and Free Glut instructions](/OpenGL_Setup.pdf?raw=true)
+[Open GL and Free Glut instructions (click here to download pdf)](/OpenGL_Setup.pdf?raw=true)
