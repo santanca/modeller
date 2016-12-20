@@ -12,4 +12,4 @@ Description - 3D modeling software created with c++ using openGL and freeGlut. I
 ![Alt text](/mainImage.png?raw=true "Final Product") 
 
 
-![Alt text](/openGL_Setup.pdf?raw=true "Final Product")
+![Alt text](/OpenGL_Setup.pdf?raw=true "Final Product")
